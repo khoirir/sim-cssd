@@ -1,0 +1,127 @@
+table.table-border-head {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+}
+
+.table-border-head th {
+  border: 1px solid #ddd;
+}
+
+td.remove-border-top {
+  border-top: 0px;
+}
+
+.table .tfoot-light .th-custom {
+  color: #495057;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.content-group {
+  margin-bottom: 20px !important;
+}
+
+fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+legend {
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  line-height: inherit;
+  color: #333333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: right;
+}
+
+.is-invalid-custom .select2-selection,
+.is-invalid .select2-selection,
+.form-control.is-invalid-custom {
+  border-color: #dc3545;
+  padding-right: 2.25rem !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 1.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback-custom {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* .is-invalid-radio[type="radio"]:not(:checked) + .form-check-label::before {
+  border-color: red;
+} */
+
+/* .is-invalid
+  .form-check-input[type="checkbox"]:not(:checked)
+  + .form-check-label::before {
+  border-color: red;
+} */
+
+.is-invalid-custom.form-check-input[type="checkbox"]:not(:checked)
+  + label::before,
+.is-invalid-custom.form-radio-input[type="radio"]:not(:checked)
+  + label::before {
+  border-color: #dc3545 !important;
+  background-color: white !important;
+}
+
+.form-check-input.is-invalid-custom ~ .form-check-label,
+.form-radio-input.is-invalid-custom ~ .radio-label {
+  color: #dc3545;
+}
+.form-check-input.is-invalid-custom ~ .invalid-feedback-custom,
+.form-radio-input.is-invalid-custom ~ .invalid-feedback-custom {
+  display: block;
+}
+
+.is-invalid.form-radio-input[type="radio"]:not(:checked) + label::before,
+.is-invalid.form-check-input[type="checkbox"]:not(:checked) + label::before {
+  border-color: #dc3545 !important;
+  background-color: white !important;
+}
+
+.form-radio-input.is-invalid ~ .radio-label,
+.form-check-input.is-invalid ~ .check-label {
+  color: #dc3545;
+}
+
+.form-radio-input.is-invalid ~ .invalid-feedback,
+.form-check-input.is-invalid ~ .invalid-feedback {
+  display: block;
+}

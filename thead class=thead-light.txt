@@ -1,0 +1,14 @@
+<thead class="thead-light">
+                                <tr>
+                                    <th scope="col" class="text-center align-middle" rowspan="2" style="width: 3%;">No.</th>
+                                    <th scope="col" class="text-center align-middle" rowspan="2" style="width: 10%;">Nama BMHP</th>
+                                    <th scope="col" class="text-center align-middle" rowspan="2" style="width: 7%;">Harga</th>
+                                    <th scope="col" class="text-center align-middle" colspan="<?= ($dataRuanganMintaBmhp->getNumRows() * 2); ?>" style="width: 80%;">Ruangan</th>
+                                </tr>
+                                <tr>
+                                    <?php foreach ($dataRuanganMintaBmhp->getResultArray() as $data) : ?>
+                                        <th scope="col" class="text-center align-middle" style="width:3%;">Jumlah</th>
+                                        <th scope="col" class="text-center align-middle" style="width: 7%;"><?= $data['ruangan']; ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
