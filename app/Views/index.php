@@ -26,7 +26,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <p class="text-danger">Standar suhu ruang CSSD: 22 - 30 °C</p>
+                            <label class="text-danger">Standar suhu ruang CSSD: 22 - 30 °C</label>
                         </div>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <p class="text-danger">Standar kelembapan ruang CSSD: 35 - 75 %</p>
+                            <label class="text-danger">Standar kelembapan ruang CSSD: 35 - 75 %</label>
                         </div>
                     </div>
                 </div>

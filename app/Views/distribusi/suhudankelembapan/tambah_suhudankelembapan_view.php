@@ -45,13 +45,12 @@
                                 <input class="form-control" name="kelembapan" id="kelembapan" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" title="Input harus berupa angka" placeholder="Kelembapan (%)">
                                 <div class="invalid-feedback" id="invalidKelembapan"></div>
                             </div>
-                            <div class="mt-5">
-                                <p class="text-danger mb-0">Standar suhu ruang CSSD: 22 - 30 °C</p>
-                                <p class="text-danger mt-0">Standar kelembapan ruang CSSD: 35 - 75 %</p>
-                            </div>
                         </fieldset>
                     </div>
                     <div class="card-footer">
+                        <div class="float-left">
+                            <label class="text-danger mb-0">Standar suhu ruang CSSD: 22 - 30 °C<br>Standar kelembapan ruang CSSD: 35 - 75 %</label>
+                        </div>
                         <button type="submit" class="btn btn-success float-right" id="btnSimpan">
                             <i class="fas fa-save mr-2"></i> Simpan
                         </button>

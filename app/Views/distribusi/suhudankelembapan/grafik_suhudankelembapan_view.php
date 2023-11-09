@@ -49,7 +49,7 @@
                         <canvas id="grafikSuhu"></canvas>
                     </div>
                     <div class="card-footer">
-                        <p class="text-danger">Standar suhu ruang CSSD: 22 - 30 °C</p>
+                        <label class="text-danger">Standar suhu ruang CSSD: 22 - 30 °C</label>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                         <canvas id="grafikKelembapan"></canvas>
                     </div>
                     <div class="card-footer">
-                        <p class="text-danger">Standar kelembapan ruang CSSD: 35 - 75 %</p>
+                        <label class="text-danger">Standar kelembapan ruang CSSD: 35 - 75 %</label>
                     </div>
                 </div>
             </div>
