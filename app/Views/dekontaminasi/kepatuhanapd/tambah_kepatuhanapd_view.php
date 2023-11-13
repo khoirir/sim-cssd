@@ -168,6 +168,6 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/dekontaminasi/kepatuhanapd/proses_tambah_edit_kepatuhanapd.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/kepatuhanapd/proses_tambah_edit_kepatuhanapd.js"></script>
 
 <?= $this->endSection(); ?>

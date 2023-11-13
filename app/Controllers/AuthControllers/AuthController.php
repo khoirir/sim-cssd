@@ -110,7 +110,7 @@ class AuthController extends BaseController
                 [
                     'sukses' => true,
                     'pesan' => [
-                        'url' => '/'
+                        'url' => base_url('/')
                     ]
                 ]
             );

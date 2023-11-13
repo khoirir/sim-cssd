@@ -75,5 +75,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/monitoring-mesin-plasma";
 </script>
-<script src="<?= base_url(); ?>/js/packingalat/monitoringmesinplasma/index_monitoringmesinplasma.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinplasma/index_monitoringmesinplasma.js"></script>
 <?= $this->endSection(); ?>

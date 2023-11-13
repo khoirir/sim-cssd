@@ -143,5 +143,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/laporan-bmhp-steril";
 </script>
-<script src="<?= base_url(); ?>/js/laporan/index_laporanbmhpsteril.js"></script>
+<script src="<?= base_url(); ?>/public/js/laporan/index_laporanbmhpsteril.js"></script>
 <?= $this->endSection(); ?>

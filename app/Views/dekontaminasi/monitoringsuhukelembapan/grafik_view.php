@@ -69,7 +69,7 @@
         </div>
     </div>
 </section>
-<script src="<?= base_url(); ?>/plugins/chart/chart.umd.min.js"></script>
-<script src="<?= base_url(); ?>/js/dekontaminasi/monitoringsuhukelembapan/grafik_monitoringsuhukelembapan.js"></script>
+<script src="<?= base_url(); ?>/public/plugins/chart/chart.umd.min.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/monitoringsuhukelembapan/grafik_monitoringsuhukelembapan.js"></script>
 
 <?= $this->endSection(); ?>

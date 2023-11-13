@@ -75,5 +75,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/laporan-sterilisasi-kamar-operasi";
 </script>
-<script src="<?= base_url(); ?>/js/laporan/index_laporansterilisasikamaroperasi.js"></script>
+<script src="<?= base_url(); ?>/public/js/laporan/index_laporansterilisasikamaroperasi.js"></script>
 <?= $this->endSection(); ?>

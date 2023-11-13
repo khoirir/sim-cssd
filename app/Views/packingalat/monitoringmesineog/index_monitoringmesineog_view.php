@@ -75,5 +75,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/monitoring-mesin-eog";
 </script>
-<script src="<?= base_url(); ?>/js/packingalat/monitoringmesineog/index_monitoringmesineog.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesineog/index_monitoringmesineog.js"></script>
 <?= $this->endSection(); ?>

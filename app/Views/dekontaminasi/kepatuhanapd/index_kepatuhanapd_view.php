@@ -72,5 +72,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/kepatuhan-apd";
 </script>
-<script src="<?= base_url(); ?>/js/dekontaminasi/kepatuhanapd/index_kepatuhanapd.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/kepatuhanapd/index_kepatuhanapd.js"></script>
 <?= $this->endSection(); ?>

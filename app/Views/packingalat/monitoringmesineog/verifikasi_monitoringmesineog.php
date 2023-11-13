@@ -80,13 +80,13 @@
                             $tanggalKeluarAlat = date("Y-m-d", strtotime($dataVerifikasi['waktu_keluar_alat']));
                             $jamKeluarAlat = date("H:i", strtotime($dataVerifikasi['waktu_keluar_alat']));
                             $displayPreviewDataPrint = 'block';
-                            $dataPrint = base_url('/img/monitoringmesineog/' . $dataVerifikasi['data_print']);
+                            $dataPrint = base_url('/public/img/monitoringmesineog/' . $dataVerifikasi['data_print']);
                             $displayPreviewIndikatorEksternal = 'block';
-                            $indikatorEksternal = base_url('/img/monitoringmesineog/' . $dataVerifikasi['indikator_eksternal']);
+                            $indikatorEksternal = base_url('/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_eksternal']);
                             $displayPreviewIndikatorInternal = 'block';
-                            $indikatorInternal = base_url('/img/monitoringmesineog/' . $dataVerifikasi['indikator_internal']);
+                            $indikatorInternal = base_url('/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_internal']);
                             $displayPreviewIndikatorBiologi = 'block';
-                            $indikatorBiologi = base_url('/img/monitoringmesineog/' . $dataVerifikasi['indikator_biologi']);
+                            $indikatorBiologi = base_url('/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_biologi']);
                             $verifikator = $dataVerifikasi['id_petugas_verifikator'];
                             $hasilVerifikasi = $dataVerifikasi['hasil_verifikasi'];
                         }
@@ -228,5 +228,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/packingalat/monitoringmesineog/verifikasi_monitoringmesineog.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesineog/verifikasi_monitoringmesineog.js"></script>
 <?= $this->endSection(); ?>

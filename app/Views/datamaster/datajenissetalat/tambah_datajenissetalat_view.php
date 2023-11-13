@@ -36,5 +36,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/datamaster/datajenissetalat/proses_tambah_edit_datajenissetalat.js"></script>
+<script src="<?= base_url(); ?>/public/js/datamaster/datajenissetalat/proses_tambah_edit_datajenissetalat.js"></script>
 <?= $this->endSection(); ?>

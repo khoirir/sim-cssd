@@ -164,6 +164,6 @@
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
 </script>
-<script src="<?= base_url(); ?>/js/distribusi/permintaanalatsteril/proses_tambah_edit_permintaanalatsteril.js"></script>
+<script src="<?= base_url(); ?>/public/js/distribusi/permintaanalatsteril/proses_tambah_edit_permintaanalatsteril.js"></script>
 <!-- /.content -->
 <?= $this->endSection(); ?>

@@ -199,5 +199,5 @@
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
 </script>
-<script src="<?= base_url(); ?>/js/packingalat/monitoringmesinsteam/proses_tambah_edit_monitoringmesinsteam.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinsteam/proses_tambah_edit_monitoringmesinsteam.js"></script>
 <?= $this->endSection(); ?>

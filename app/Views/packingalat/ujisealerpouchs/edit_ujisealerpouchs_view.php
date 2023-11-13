@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label for="uploadBuktiUjiSealer">Upload Bukti Uji Sealer</label>
                                 <div class="previewBuktiUjiSealer card mb-2" style="width: 50%;">
-                                    <img class="card-img p-1" src="<?= base_url('/img/ujisealerpouchs/' . $dataUjiSealerPouchsBerdasarkanId['upload_bukti_uji']); ?>" style="width:100%; height: 300px; object-fit: contain;" />
+                                    <img class="card-img p-1" src="<?= base_url('/public/img/ujisealerpouchs/' . $dataUjiSealerPouchsBerdasarkanId['upload_bukti_uji']); ?>" style="width:100%; height: 300px; object-fit: contain;" />
                                 </div>
                                 <input class="form-control" type="file" name="uploadBuktiUjiSealer" id="uploadBuktiUjiSealer" onchange="previewFile(this, 'previewBuktiUjiSealer', '#previewName')" accept=".jpg, .jpeg, .png">
                                 <input type="hidden" id="previewName" name="namaFile" value="<?= $dataUjiSealerPouchsBerdasarkanId['upload_bukti_uji']; ?>">
@@ -97,5 +97,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/packingalat/ujisealerpouchs/proses_tambah_edit_ujisealerpouchs.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/ujisealerpouchs/proses_tambah_edit_ujisealerpouchs.js"></script>
 <?= $this->endSection(); ?>

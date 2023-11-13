@@ -71,5 +71,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/monitoring-packing-alat";
 </script>
-<script src="<?= base_url(); ?>/js/packingalat/monitoringpackingalat/index_monitoringpackingalat.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringpackingalat/index_monitoringpackingalat.js"></script>
 <?= $this->endSection(); ?>

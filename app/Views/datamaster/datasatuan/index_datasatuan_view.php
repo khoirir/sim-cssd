@@ -36,5 +36,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/data-satuan";
 </script>
-<script src="<?= base_url(); ?>/js/datamaster/datasatuan/index_datasatuan.js"></script>
+<script src="<?= base_url(); ?>/public/js/datamaster/datasatuan/index_datasatuan.js"></script>
 <?= $this->endSection(); ?>

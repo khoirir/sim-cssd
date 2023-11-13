@@ -35,10 +35,10 @@
                         <div class="mt-1">
                             <div class="card mt-2" style="width: 100%;">
                                 <?php
-                                $gambarDokumentasi = '/img/placeholder.svg';
+                                $gambarDokumentasi = '/public/img/placeholder.svg';
                                 $dokumentasi = $dataPenerimaan['upload_dokumentasi'];
                                 if ($dokumentasi) {
-                                    $gambarDokumentasi = '/img/penerimaanalatkotor/' . $dokumentasi;
+                                    $gambarDokumentasi = '/public/img/penerimaanalatkotor/' . $dokumentasi;
                                 }
                                 ?>
                                 <img class="card-img p-1" src="<?= base_url($gambarDokumentasi); ?>" style="width:100%; height: 260px; object-fit: contain;" />

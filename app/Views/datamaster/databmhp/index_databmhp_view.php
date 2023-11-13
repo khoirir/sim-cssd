@@ -37,5 +37,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/data-bmhp";
 </script>
-<script src="<?= base_url(); ?>/js/datamaster/databmhp/index_databmhp.js"></script>
+<script src="<?= base_url(); ?>/public/js/datamaster/databmhp/index_databmhp.js"></script>
 <?= $this->endSection(); ?>

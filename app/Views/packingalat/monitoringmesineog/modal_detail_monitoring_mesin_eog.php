@@ -3,10 +3,10 @@
     if ($dataVerifikasi) {
         $tanggalKeluarAlat = date("d-m-Y H:i", strtotime($dataVerifikasi['waktu_keluar_alat']));
         $jamKeluarAlat = date("H:i", strtotime($dataVerifikasi['waktu_keluar_alat']));
-        $dataPrint = '/img/monitoringmesineog/' . $dataVerifikasi['data_print'];
-        $indikatorEksternal = '/img/monitoringmesineog/' . $dataVerifikasi['indikator_eksternal'];
-        $indikatorInternal = '/img/monitoringmesineog/' . $dataVerifikasi['indikator_internal'];
-        $indikatorBiologi = '/img/monitoringmesineog/' . $dataVerifikasi['indikator_biologi'];
+        $dataPrint = '/public/img/monitoringmesineog/' . $dataVerifikasi['data_print'];
+        $indikatorEksternal = '/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_eksternal'];
+        $indikatorInternal = '/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_internal'];
+        $indikatorBiologi = '/public/img/monitoringmesineog/' . $dataVerifikasi['indikator_biologi'];
         $verifikator = $dataVerifikasi['verifikator'];
         $hasilVerifikasi = $dataVerifikasi['hasil_verifikasi'];
         $warnaHasil = strtolower($hasilVerifikasi) === 'tidak steril' ? 'danger' : 'success';
@@ -73,7 +73,7 @@
                                             if ($no === 1) :
                                             ?>
                                                 <td class="align-middle text-center" rowspan="<?= $jumlahRowspan; ?>" style="border-left: 1px solid rgba(0, 0, 0, 0.2)">
-                                                    <img class="card-img p-1" src="<?= base_url($dataPrint ?? '/img/placeholder.svg'); ?>" style="width:100%; height: 250px; object-fit: contain;" />
+                                                    <img class="card-img p-1" src="<?= base_url($dataPrint ?? '/public/img/placeholder.svg'); ?>" style="width:100%; height: 250px; object-fit: contain;" />
                                                 </td>
                                             <?php
                                             endif;
@@ -93,19 +93,19 @@
                     <div class="col-lg-4">
                         <strong><i class="fas fa-flask mr-1"></i> Indikator Kimia Eksternal</strong>
                         <div class="card mt-2">
-                            <img class="card-img p-1" src="<?= base_url($indikatorEksternal ?? '/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
+                            <img class="card-img p-1" src="<?= base_url($indikatorEksternal ?? '/public/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
                         </div>
                     </div>
                     <div class="col-lg-4">
                         <strong><i class="fas fa-vial mr-1"></i> Indikator Kimia Internal</strong>
                         <div class="card mt-2">
-                            <img class="card-img p-1" src="<?= base_url($indikatorInternal ?? '/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
+                            <img class="card-img p-1" src="<?= base_url($indikatorInternal ?? '/public/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
                         </div>
                     </div>
                     <div class="col-lg-4">
                         <strong><i class="fas fa-dna mr-1"></i> Indikator Biologi</strong>
                         <div class="card mt-2">
-                            <img class="card-img p-1" src="<?= base_url($indikatorBiologi ?? '/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
+                            <img class="card-img p-1" src="<?= base_url($indikatorBiologi ?? '/public/img/placeholder.svg'); ?>" style="width:100%; height: 200px; object-fit: contain;" />
                         </div>
                     </div>
                 </div>

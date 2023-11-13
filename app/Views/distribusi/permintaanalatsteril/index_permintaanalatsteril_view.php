@@ -97,5 +97,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/permintaan-alat-steril";
 </script>
-<script src="<?= base_url(); ?>/js/distribusi/permintaanalatsteril/index_permintaanalatsteril.js"></script>
+<script src="<?= base_url(); ?>/public/js/distribusi/permintaanalatsteril/index_permintaanalatsteril.js"></script>
 <?= $this->endSection(); ?>

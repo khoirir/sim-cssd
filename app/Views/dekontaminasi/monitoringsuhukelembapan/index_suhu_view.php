@@ -74,5 +74,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/monitoring-suhu-kelembapan";
 </script>
-<script src="<?= base_url(); ?>/js/dekontaminasi/monitoringsuhukelembapan/index_monitoringsuhukelembapan.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/monitoringsuhukelembapan/index_monitoringsuhukelembapan.js"></script>
 <?= $this->endSection(); ?>

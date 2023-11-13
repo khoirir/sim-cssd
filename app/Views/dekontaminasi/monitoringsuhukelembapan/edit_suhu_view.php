@@ -60,5 +60,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/dekontaminasi/monitoringsuhukelembapan/proses_tambah_edit_monitoringsuhukelembapan.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/monitoringsuhukelembapan/proses_tambah_edit_monitoringsuhukelembapan.js"></script>
 <?= $this->endSection(); ?>

@@ -95,5 +95,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/packingalat/ujisealerpouchs/proses_tambah_edit_ujisealerpouchs.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/ujisealerpouchs/proses_tambah_edit_ujisealerpouchs.js"></script>
 <?= $this->endSection(); ?>

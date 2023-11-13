@@ -177,6 +177,6 @@
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
 </script>
-<script src="<?= base_url(); ?>/js/distribusi/permintaanbmhpsteril/proses_tambah_edit_permintaanbmhpsteril.js"></script>
+<script src="<?= base_url(); ?>/public/js/distribusi/permintaanbmhpsteril/proses_tambah_edit_permintaanbmhpsteril.js"></script>
 <!-- /.content -->
 <?= $this->endSection(); ?>

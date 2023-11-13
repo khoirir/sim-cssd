@@ -183,5 +183,5 @@
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
 </script>
-<script src="<?= base_url(); ?>/js/packingalat/monitoringmesineog/proses_tambah_edit_monitoringmesineog.js"></script>
+<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesineog/proses_tambah_edit_monitoringmesineog.js"></script>
 <?= $this->endSection(); ?>

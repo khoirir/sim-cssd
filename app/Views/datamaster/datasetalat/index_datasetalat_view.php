@@ -37,5 +37,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/data-set-alat";
 </script>
-<script src="<?= base_url(); ?>/js/datamaster/datasetalat/index_datasetalat.js"></script>
+<script src="<?= base_url(); ?>/public/js/datamaster/datasetalat/index_datasetalat.js"></script>
 <?= $this->endSection(); ?>

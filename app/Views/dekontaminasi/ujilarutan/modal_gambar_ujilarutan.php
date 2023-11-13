@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div class="card mt-2" style="width: 100%;">
-                    <img class="card-img p-1" src="<?= base_url('img/ujilarutan/' . $larutan); ?>" style="width:100%; height: 400px; object-fit: contain;" />
+                    <img class="card-img p-1" src="<?= base_url('/public/img/ujilarutan/' . $larutan); ?>" style="width:100%; height: 400px; object-fit: contain;" />
                 </div>
             </div>
             <div class="modal-footer"></div>

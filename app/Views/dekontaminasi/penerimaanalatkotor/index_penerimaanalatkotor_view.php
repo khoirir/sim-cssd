@@ -104,5 +104,5 @@
     let csrfHash = "<?= csrf_hash(); ?>";
     let url = "<?= base_url(); ?>/penerimaan-alat-kotor";
 </script>
-<script src="<?= base_url(); ?>/js/dekontaminasi/penerimaanalatkotor/index_penerimaanalatkotor.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/penerimaanalatkotor/index_penerimaanalatkotor.js"></script>
 <?= $this->endSection(); ?>

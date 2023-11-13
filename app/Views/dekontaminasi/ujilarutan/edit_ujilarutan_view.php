@@ -37,7 +37,7 @@
                             <div class="form-group">
                                 <label for="uploadLarutan">Gambar Larutan</label>
                                 <div class="previewUploadLarutan card mb-2" style="width: 50%;">
-                                    <img class="card-img p-1" src="<?= base_url('/img/ujilarutan/' . $dataUjiLarutanBerdasarkanId['upload_larutan']); ?>" style="width:100%; height: 300px; object-fit: contain;" />
+                                    <img class="card-img p-1" src="<?= base_url('/public/img/ujilarutan/' . $dataUjiLarutanBerdasarkanId['upload_larutan']); ?>" style="width:100%; height: 300px; object-fit: contain;" />
                                 </div>
                                 <input class="form-control" type="file" name="uploadLarutan" id="uploadLarutan" onchange="previewFile(this, 'previewUploadLarutan', '#previewName')" accept=".jpg, .jpeg, .png">
                                 <input type="hidden" id="previewName" name="namaFile" value="<?= $dataUjiLarutanBerdasarkanId['upload_larutan']; ?>">
@@ -95,5 +95,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/js/dekontaminasi/ujilarutan/proses_tambah_edit_ujilarutan.js"></script>
+<script src="<?= base_url(); ?>/public/js/dekontaminasi/ujilarutan/proses_tambah_edit_ujilarutan.js"></script>
 <?= $this->endSection(); ?>
