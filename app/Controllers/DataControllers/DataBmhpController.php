@@ -54,7 +54,7 @@ class DataBmhpController extends BaseController
                 $td = [
                     'noReferensi' => generateNoReferensi($data['created_at'], $data['id']),
                     'namaBmhp' => $data['nama_set_alat'],
-                    'harga' => 'Rp ' . number_format($data['harga'], 2, ',', '.'),
+                    'harga' => 'Rp' . number_format($data['harga'], 2, ',', '.'),
                     'satuan' => strtoupper($data['kode_satuan']),
                     'id' => $data['id'],
                 ];

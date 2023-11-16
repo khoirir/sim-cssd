@@ -166,7 +166,16 @@ function dataHeaderTabelLaporanBmhp(tab) {
                         {
                             "data": ind,
                             "orderable": false,
-                            "className": regex.test(val) ? "text-center align-middle" : "text-right align-middle"
+                            "className": regex.test(val) ? "text-center align-middle" : "text-right align-middle",
+                            // "render":function(data, type, row){
+                            //     if (regex.test(data)) {
+                            //         return /* html */`<span style="float-left">${data}</span>`;
+                            //     } else {
+                            //         let formatCurrency = Intl.NumberFormat('id-ID');
+                            //         let hasil = formatCurrency.format(data);
+                            //         return /* html */`<span style="float-right">${hasil}</span>`;
+                            //     }
+                            // }
                         }
                     );
                 });

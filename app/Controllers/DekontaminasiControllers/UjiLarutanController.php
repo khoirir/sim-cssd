@@ -233,7 +233,7 @@ class UjiLarutanController extends BaseController
                     ]
                 );
             }
-            $uploadLarutan->move('img/ujilarutan', $data['upload_larutan']);
+            $uploadLarutan->move('public/img/ujilarutan', $data['upload_larutan']);
             return $this->response->setJSON(
                 [
                     'sukses' => true,
@@ -312,8 +312,8 @@ class UjiLarutanController extends BaseController
                 $larutanUpload = $dataUjiLarutanBerdasarkanId['upload_larutan'];
             } else {
                 $larutanUpload = $uploadLarutan->getRandomName();
-                $uploadLarutan->move('img/ujilarutan', $larutanUpload);
-                unlink('img/ujilarutan/' . $dataUjiLarutanBerdasarkanId['upload_larutan']);
+                $uploadLarutan->move('public/img/ujilarutan', $larutanUpload);
+                unlink('public/img/ujilarutan/' . $dataUjiLarutanBerdasarkanId['upload_larutan']);
             }
 
             $data = [

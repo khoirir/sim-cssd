@@ -236,7 +236,7 @@ class UjiSealerPouchsController extends BaseController
                     ]
                 );
             }
-            $uploadBuktiUjiSealer->move('img/ujisealerpouchs', $data['upload_bukti_uji']);
+            $uploadBuktiUjiSealer->move('public/img/ujisealerpouchs', $data['upload_bukti_uji']);
             return $this->response->setJSON(
                 [
                     'sukses' => true,
@@ -315,8 +315,8 @@ class UjiSealerPouchsController extends BaseController
                 $buktiUjiUpload = $dataSealerPouchsBerdasarkanId['upload_bukti_uji'];
             } else {
                 $buktiUjiUpload = $uploadBuktiUjiSealer->getRandomName();
-                $uploadBuktiUjiSealer->move('img/ujisealerpouchs', $buktiUjiUpload);
-                unlink('img/ujisealerpouchs/' . $dataSealerPouchsBerdasarkanId['upload_bukti_uji']);
+                $uploadBuktiUjiSealer->move('public/img/ujisealerpouchs', $buktiUjiUpload);
+                unlink('public/img/ujisealerpouchs/' . $dataSealerPouchsBerdasarkanId['upload_bukti_uji']);
             }
 
             $data = [

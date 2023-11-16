@@ -55,7 +55,7 @@ class BmhpSterilController extends BaseController
                 $td['no'] = $no++ . ".";
                 $td['bmhp'] = $bmhp['nama_set_alat'];
                 if ($jenisLaporan === "tab_per_ruangan") {
-                    $td['harga'] = "Rp " . number_format($bmhp['harga'], 2, ',', '.');
+                    $td['harga'] = "Rp" . number_format($bmhp['harga'], 2, ',', '.');
                     $td['-'] = "-";
                     $dataLaporanPermintaanBmhp = $permintaanBmhpSterilModel
                         ->dataLaporanPermintaanBmhpPerRuangan($tglAwal, $tglAkhir)
@@ -82,7 +82,7 @@ class BmhpSterilController extends BaseController
 
                         foreach ($tempData as $idRuangan => $data) {
                             $td['jumlah' . $idRuangan] = $data['jumlah'];
-                            $td[$idRuangan] = "Rp " . number_format($data['total'], 2, ',', '.');
+                            $td[$idRuangan] = "Rp" . number_format($data['total'], 2, ',', '.');
                         }
                     }
                 }

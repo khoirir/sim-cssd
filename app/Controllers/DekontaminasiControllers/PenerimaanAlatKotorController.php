@@ -311,7 +311,7 @@ class PenerimaanAlatKotorController extends BaseController
                     ]
                 );
             }
-            $uploadDokumentasi->move('img/penerimaanalatkotor', $data['upload_dokumentasi']);
+            $uploadDokumentasi->move('public/img/penerimaanalatkotor', $data['upload_dokumentasi']);
             return $this->response->setJSON(
                 [
                     'sukses' => true,
@@ -343,7 +343,7 @@ class PenerimaanAlatKotorController extends BaseController
             $dataDokumentasi = $dataPenerimaanAlatKotorBerdasarkanId['upload_dokumentasi'];
             $jumlahDokumentasiSama = $penerimaanAlatKotorModel->where('upload_dokumentasi', $dataDokumentasi)->get()->getNumRows();
             if ($jumlahDokumentasiSama === 1) {
-                unlink('img/penerimaanalatkotor/' . $dataDokumentasi);
+                unlink('public/img/penerimaanalatkotor/' . $dataDokumentasi);
             }
 
             $deleteDokumentasi = $penerimaanAlatKotorModel->update($id, ["upload_dokumentasi" => null]);

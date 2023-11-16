@@ -1105,10 +1105,10 @@ class MonitoringMesinSteamController extends BaseController
                         ]
                     );
                 }
-                $dataPrint->move('img/monitoringmesinsteam', $data['data_print']);
-                $indikatorEksternal->move('img/monitoringmesinsteam', $data['indikator_eksternal']);
-                $indikatorInternal->move('img/monitoringmesinsteam', $data['indikator_internal']);
-                $indikatorBiologi->move('img/monitoringmesinsteam', $data['indikator_biologi']);
+                $dataPrint->move('public/img/monitoringmesinsteam', $data['data_print']);
+                $indikatorEksternal->move('public/img/monitoringmesinsteam', $data['indikator_eksternal']);
+                $indikatorInternal->move('public/img/monitoringmesinsteam', $data['indikator_internal']);
+                $indikatorBiologi->move('public/img/monitoringmesinsteam', $data['indikator_biologi']);
 
                 return $this->response->setJSON(
                     [
@@ -1125,32 +1125,32 @@ class MonitoringMesinSteamController extends BaseController
                 $print = $dataVerifikasiBerdasarkanId['data_print'];
             } else {
                 $print = $dataPrint->getRandomName();
-                $dataPrint->move('img/monitoringmesinsteam', $print);
-                unlink('img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['data_print']);
+                $dataPrint->move('public/img/monitoringmesinsteam', $print);
+                unlink('public/img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['data_print']);
             }
 
             if ($indikatorEksternal->getError() == 4) {
                 $eksternal = $dataVerifikasiBerdasarkanId['indikator_eksternal'];
             } else {
                 $eksternal = $indikatorEksternal->getRandomName();
-                $indikatorEksternal->move('img/monitoringmesinsteam', $eksternal);
-                unlink('img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_eksternal']);
+                $indikatorEksternal->move('public/img/monitoringmesinsteam', $eksternal);
+                unlink('public/img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_eksternal']);
             }
 
             if ($indikatorInternal->getError() == 4) {
                 $internal = $dataVerifikasiBerdasarkanId['indikator_internal'];
             } else {
                 $internal = $indikatorInternal->getRandomName();
-                $indikatorInternal->move('img/monitoringmesinsteam', $internal);
-                unlink('img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_internal']);
+                $indikatorInternal->move('public/img/monitoringmesinsteam', $internal);
+                unlink('public/img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_internal']);
             }
 
             if ($indikatorBiologi->getError() == 4) {
                 $biologi = $dataVerifikasiBerdasarkanId['indikator_biologi'];
             } else {
                 $biologi = $indikatorBiologi->getRandomName();
-                $indikatorBiologi->move('img/monitoringmesinsteam', $biologi);
-                unlink('img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_biologi']);
+                $indikatorBiologi->move('public/img/monitoringmesinsteam', $biologi);
+                unlink('public/img/monitoringmesinsteam/' . $dataVerifikasiBerdasarkanId['indikator_biologi']);
             }
 
             $dataUpdate = [
