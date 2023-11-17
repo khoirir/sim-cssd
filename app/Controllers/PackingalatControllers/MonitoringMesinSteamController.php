@@ -5,9 +5,7 @@ namespace App\Controllers\PackingalatControllers;
 use App\Controllers\BaseController;
 use App\Models\DataModels\DepartemenModel;
 use App\Models\DataModels\PegawaiModel;
-use App\Models\DataModels\SetAlatModel;
 use App\Models\DekontaminasiModels\PenerimaanAlatKotorDetailModel;
-use App\Models\DekontaminasiModels\PenerimaanAlatKotorModel;
 use App\Models\PackingAlatModels\MonitoringMesinSteamDetailModel;
 use App\Models\PackingAlatModels\MonitoringMesinSteamModel;
 use App\Models\PackingAlatModels\MonitoringMesinSteamOperatorModel;
@@ -16,29 +14,11 @@ use CodeIgniter\Database\RawSql;
 
 class MonitoringMesinSteamController extends BaseController
 {
-    protected $pegawaiModel;
-    protected $departemenModel;
-    protected $setAlatModel;
-    protected $penerimaanAlatKotorModel;
-    protected $penerimaanAlatKotorDetailModel;
-    protected $monitoringMesinSteamModel;
-    protected $monitoringMesinSteamDetailModel;
-    protected $monitoringMesinSteamOperatorModel;
-    protected $monitoringMesinSteamVerifikasiModel;
     protected $valid;
     protected $validation;
 
     public function __construct()
     {
-        $this->pegawaiModel = new PegawaiModel();
-        $this->departemenModel = new DepartemenModel();
-        $this->penerimaanAlatKotorModel = new PenerimaanAlatKotorModel();
-        $this->penerimaanAlatKotorDetailModel = new PenerimaanAlatKotorDetailModel();
-        $this->monitoringMesinSteamModel = new MonitoringMesinSteamModel();
-        $this->monitoringMesinSteamDetailModel = new MonitoringMesinSteamDetailModel();
-        $this->monitoringMesinSteamOperatorModel = new MonitoringMesinSteamOperatorModel();
-        $this->monitoringMesinSteamVerifikasiModel = new MonitoringMesinSteamVerifikasiModel();
-        $this->setAlatModel = new SetAlatModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -62,14 +42,18 @@ class MonitoringMesinSteamController extends BaseController
         } elseif ($jamSekarang >= '14:01' && $jamSekarang <= '21:00') {
             $shift = 'sore';
         }
+
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
+
         $data = [
             'title' => 'Tambah Monitoring Mesin Steam',
             'header' => 'Monitoring Mesin Steam',
             'tglSekarang' => date('Y-m-d'),
             'jamSekarang' => $jamSekarang,
             'shift' => $shift,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
         ];
         return view('packingalat/monitoringmesinsteam/tambah_monitoringmesinsteam_view', $data);
     }
@@ -81,11 +65,15 @@ class MonitoringMesinSteamController extends BaseController
             $tglAkhir = $this->request->getPost('tglAkhir') . " 23:59:59";
             $start = $this->request->getPost('start');
             $limit = $this->request->getPost('length');
-            $dataMonitoringMesinSteamBerdasarkanTanggaldanLimit = $this->monitoringMesinSteamModel
+
+            $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+            $monitoringMesinSteamVerifikasiModel = model(MonitoringMesinSteamVerifikasiModel::class);
+
+            $dataMonitoringMesinSteamBerdasarkanTanggaldanLimit = $monitoringMesinSteamModel
                 ->dataMonitoringMesinSteamBerdasarkanTanggaldanLimit($tglAwal, $tglAkhir, $start, $limit)
                 ->getResultArray();
 
-            $jumlahDataMonitoringMesinSteamBerdasarkanTanggal = $this->monitoringMesinSteamModel
+            $jumlahDataMonitoringMesinSteamBerdasarkanTanggal = $monitoringMesinSteamModel
                 ->dataMonitoringMesinSteamBerdasarkanTanggal($tglAwal, $tglAkhir)
                 ->getNumRows();
 
@@ -98,7 +86,7 @@ class MonitoringMesinSteamController extends BaseController
                 $tombolAksi = "<div class='d-flex justify-content-center'>" . $a . $form . "</div>";
                 $aksi = $tombolAksi;
 
-                $dataVerifikasi = $this->monitoringMesinSteamVerifikasiModel
+                $dataVerifikasi = $monitoringMesinSteamVerifikasiModel
                     ->dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster($data['id'])
                     ->getRowArray();
                 $prosesDari = "";
@@ -122,7 +110,7 @@ class MonitoringMesinSteamController extends BaseController
 
                         $aksi = "<a href=\"" . base_url('monitoring-mesin-steam/proses-ulang/' . $data['id']) . "\" data-popup=\"tooltip\" title=\"Proses Ulang\" class=\"btn btn-primary btn-sm border-0 ml-1\"><i class=\"fa-solid fa-repeat\"></i></a>";
 
-                        $dataProsesUlang = $this->monitoringMesinSteamModel
+                        $dataProsesUlang = $monitoringMesinSteamModel
                             ->where('proses_ulang', $data['id'])
                             ->where('deleted_at', null)
                             ->get()->getNumRows();
@@ -164,7 +152,12 @@ class MonitoringMesinSteamController extends BaseController
     public function detailMonitoringMesinSteam($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinSteamBerdasarkanId = $this->monitoringMesinSteamModel->find($id);
+            $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+            $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+            $monitoringMesinSteamOperatorModel = model(MonitoringMesinSteamOperatorModel::class);
+            $monitoringMesinSteamVerifikasiModel = model(MonitoringMesinSteamVerifikasiModel::class);
+
+            $dataMonitoringMesinSteamBerdasarkanId = $monitoringMesinSteamModel->find($id);
             if (!$dataMonitoringMesinSteamBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -174,14 +167,14 @@ class MonitoringMesinSteamController extends BaseController
                 );
             }
 
-            $operatorMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamOperatorModel
+            $operatorMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamOperatorModel
                 ->operatorMonitoringMesinSteamBerdasarkanIdMaster($id)
                 ->getResultArray();
 
-            $dataDetailMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamDetailModel
+            $dataDetailMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamDetailModel
                 ->dataDetailMonitoringMesinSteamBerdasarkanIdMaster($id);
 
-            $dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamVerifikasiModel
+            $dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamVerifikasiModel
                 ->dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster($id)
                 ->getFirstRow('array');
 
@@ -292,8 +285,11 @@ class MonitoringMesinSteamController extends BaseController
                 'mesin' => $mesin,
             ];
 
+            $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+            $monitoringMesinSteamOperatorModel = model(MonitoringMesinSteamOperatorModel::class);
+
             if ($prosesUlang) {
-                $dataMesinSteam = $this->monitoringMesinSteamModel->find($prosesUlang);
+                $dataMesinSteam = $monitoringMesinSteamModel->find($prosesUlang);
                 if (!$dataMesinSteam) {
                     return $this->response->setJSON(
                         [
@@ -307,7 +303,7 @@ class MonitoringMesinSteamController extends BaseController
                     );
                 }
 
-                $dataProsesUlang = $this->monitoringMesinSteamModel
+                $dataProsesUlang = $monitoringMesinSteamModel
                     ->where('proses_ulang', $prosesUlang)
                     ->where('deleted_at', null)
                     ->get()->getNumRows();
@@ -329,7 +325,7 @@ class MonitoringMesinSteamController extends BaseController
                 $data['proses_ulang'] = $prosesUlang;
             }
 
-            $insertMonitoringMesinSteam = $this->monitoringMesinSteamModel->insert($data);
+            $insertMonitoringMesinSteam = $monitoringMesinSteamModel->insert($data);
             $insertMonitoringMesinSteamLog = ($insertMonitoringMesinSteam) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinSteamLog .= " monitoring mesin steam dengan id " . $insertMonitoringMesinSteam;
             $this->logModel->insert([
@@ -357,7 +353,7 @@ class MonitoringMesinSteamController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinSteamOperator, $dataDetail);
             }
-            $insertMonitoringMesinSteamOperator = $this->monitoringMesinSteamOperatorModel->insertMultiple($dataInsertMonitoringMesinSteamOperator);
+            $insertMonitoringMesinSteamOperator = $monitoringMesinSteamOperatorModel->insertMultiple($dataInsertMonitoringMesinSteamOperator);
             $insertMonitoringMesinSteamOperatorLog = ($insertMonitoringMesinSteamOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinSteamOperatorLog .= " operator monitoring mesin steam dengan id master " . $insertMonitoringMesinSteam;
             $this->logModel->insert([
@@ -365,7 +361,7 @@ class MonitoringMesinSteamController extends BaseController
                 "log" => $insertMonitoringMesinSteamOperatorLog
             ]);
             if (!$insertMonitoringMesinSteamOperator) {
-                $this->monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
+                $monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
                 return $this->response->setJSON(
                     [
                         'sukses' => false,
@@ -378,17 +374,20 @@ class MonitoringMesinSteamController extends BaseController
                 );
             }
 
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+            $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
             foreach ($dataAlat as $detail) {
                 $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                 $jumlah = $detail['jumlah'];
                 $alat = $detail['alat'];
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
 
                     if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
-                        $this->monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
-                        $this->monitoringMesinSteamOperatorModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
+                        $monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
+                        $monitoringMesinSteamOperatorModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
 
                         return $this->response->setJSON(
                             [
@@ -412,11 +411,11 @@ class MonitoringMesinSteamController extends BaseController
                     'sisa_distribusi' => $jumlah
                 ];
 
-                $insertMonitoringMesinSteamDetail = $this->monitoringMesinSteamDetailModel->insert($dataDetail, false);
+                $insertMonitoringMesinSteamDetail = $monitoringMesinSteamDetailModel->insert($dataDetail, false);
                 if (!$insertMonitoringMesinSteamDetail) {
-                    $this->monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
-                    $this->monitoringMesinSteamOperatorModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
-                    $this->monitoringMesinSteamDetailModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
+                    $monitoringMesinSteamModel->delete($insertMonitoringMesinSteam);
+                    $monitoringMesinSteamOperatorModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
+                    $monitoringMesinSteamDetailModel->where('id_monitoring_mesin_steam', $insertMonitoringMesinSteam)->delete();
                     $insertMonitoringMesinSteamDetailLog = "Gagal insert detail monitoring mesin steam dengan id master " . $insertMonitoringMesinSteam;
                     $this->logModel->insert([
                         "id_user" => session()->get('id_user'),
@@ -436,12 +435,12 @@ class MonitoringMesinSteamController extends BaseController
                 }
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
                     $dataUpdateDetailPenerimaanAlatKotor = [
                         'status_proses' => 'Diproses',
                         'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                     ];
-                    $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                    $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                 }
             }
 
@@ -465,7 +464,11 @@ class MonitoringMesinSteamController extends BaseController
 
     public function editMonitoringMesinSteam($id = null)
     {
-        $dataMonitoringMesinSteamBerdasarkanId = $this->monitoringMesinSteamModel->find($id);
+        $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+        $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+        $monitoringMesinSteamOperatorModel = model(MonitoringMesinSteamOperatorModel::class);
+
+        $dataMonitoringMesinSteamBerdasarkanId = $monitoringMesinSteamModel->find($id);
         if (!$dataMonitoringMesinSteamBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
@@ -474,18 +477,21 @@ class MonitoringMesinSteamController extends BaseController
             return redirect()->to('/monitoring-mesin-steam');
         }
 
-        $dataOperator = $this->monitoringMesinSteamOperatorModel
+        $dataOperator = $monitoringMesinSteamOperatorModel
             ->operatorMonitoringMesinSteamBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataDetail = $this->monitoringMesinSteamDetailModel
+        $dataDetail = $monitoringMesinSteamDetailModel
             ->dataDetailMonitoringMesinSteamBerdasarkanIdMaster($id);
+
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
 
         $data = [
             'title' => 'Edit Monitoring Mesin Steam',
             'header' => 'Monitoring Mesin Steam',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinSteam' => $dataMonitoringMesinSteamBerdasarkanId,
             'dataOperator' => $dataOperator,
             'dataDetail' => $dataDetail
@@ -497,7 +503,9 @@ class MonitoringMesinSteamController extends BaseController
     public function hapusDetailMonitoringMesinSteam($id)
     {
         if ($this->request->isAJAX()) {
-            $dataDetail = $this->monitoringMesinSteamDetailModel->find($id);
+            $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
+            $dataDetail = $monitoringMesinSteamDetailModel->find($id);
             if (!$dataDetail) {
                 return $this->response->setJSON(
                     [
@@ -510,7 +518,7 @@ class MonitoringMesinSteamController extends BaseController
                 );
             }
 
-            $deleteDetail = $this->monitoringMesinSteamDetailModel->delete($id, false);
+            $deleteDetail = $monitoringMesinSteamDetailModel->delete($id, false);
             $deleteDetailLog = ($deleteDetail) ? "Delete" : "Gagal delete";
             $deleteDetailLog .= " detail monitoring mesin steam dengan id " . $id;
             $this->logModel->insert([
@@ -532,7 +540,8 @@ class MonitoringMesinSteamController extends BaseController
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -541,7 +550,7 @@ class MonitoringMesinSteamController extends BaseController
                 if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                     $updateData['status_proses'] = '';
                 }
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
             return $this->response->setJSON(
@@ -559,7 +568,9 @@ class MonitoringMesinSteamController extends BaseController
     public function batalHapusDetailMonitoringMesinSteam($id)
     {
         if ($this->request->isAJAX()) {
-            $updateDetail = $this->monitoringMesinSteamDetailModel->update($id, ['deleted_at' => null], false);
+            $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
+            $updateDetail = $monitoringMesinSteamDetailModel->update($id, ['deleted_at' => null], false);
             $updateDetailLog = ($updateDetail) ? "Update" : "Gagal update";
             $updateDetailLog .= " 'Batal Hapus' detail monitoring mesin steam dengan id " . $id;
             $this->logModel->insert([
@@ -577,20 +588,21 @@ class MonitoringMesinSteamController extends BaseController
                     ]
                 );
             }
-            $dataDetail = $this->monitoringMesinSteamDetailModel->find($id);
+            $dataDetail = $monitoringMesinSteamDetailModel->find($id);
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] - (int)$jumlah,
                     'status_proses' => 'Diproses'
                 ];
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
-            $dataReturn = $this->monitoringMesinSteamDetailModel
+            $dataReturn = $monitoringMesinSteamDetailModel
                 ->dataDetailMonitoringMesinSteamBerdasarkanId($id)
                 ->getFirstRow('array');
 
@@ -650,8 +662,8 @@ class MonitoringMesinSteamController extends BaseController
                 'siklus' => $siklus,
                 'mesin' => $mesin,
             ];
-
-            $updateMonitoringMesinSteam = $this->monitoringMesinSteamModel->update($id, $data, false);
+            $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+            $updateMonitoringMesinSteam = $monitoringMesinSteamModel->update($id, $data, false);
             $updateMonitoringMesinSteamLog = ($updateMonitoringMesinSteam) ? "Update" : "Gagal update";
             $updateMonitoringMesinSteamLog .= " monitoring mesin steam dengan id " . $id;
             $this->logModel->insert([
@@ -670,8 +682,8 @@ class MonitoringMesinSteamController extends BaseController
                     ]
                 );
             }
-
-            $deleteOperator = $this->monitoringMesinSteamOperatorModel
+            $monitoringMesinSteamOperatorModel = model(MonitoringMesinSteamOperatorModel::class);
+            $deleteOperator = $monitoringMesinSteamOperatorModel
                 ->where('id_monitoring_mesin_steam', $id)
                 ->delete();
 
@@ -683,7 +695,7 @@ class MonitoringMesinSteamController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinSteamOperator, $dataDetail);
             }
-            $insertMonitoringMesinSteamOperator = $this->monitoringMesinSteamOperatorModel
+            $insertMonitoringMesinSteamOperator = $monitoringMesinSteamOperatorModel
                 ->insertMultiple($dataInsertMonitoringMesinSteamOperator);
             $insertMonitoringMesinSteamOperatorLog = ($insertMonitoringMesinSteamOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinSteamOperatorLog .= " operator monitoring mesin steam dengan id master " . $id;
@@ -705,13 +717,16 @@ class MonitoringMesinSteamController extends BaseController
             }
 
             if ($dataAlat) {
+                $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+                $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
                 foreach ($dataAlat as $detail) {
                     $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                     $jumlah = $detail['jumlah'];
                     $alat = $detail['alat'];
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
@@ -737,7 +752,7 @@ class MonitoringMesinSteamController extends BaseController
                         'sisa_distribusi' => $jumlah
                     ];
 
-                    $insertMonitoringMesinSteamDetail = $this->monitoringMesinSteamDetailModel
+                    $insertMonitoringMesinSteamDetail = $monitoringMesinSteamDetailModel
                         ->insert($dataDetail, false);
 
                     if (!$insertMonitoringMesinSteamDetail) {
@@ -760,14 +775,14 @@ class MonitoringMesinSteamController extends BaseController
                     }
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         $dataUpdateDetailPenerimaanAlatKotor = [
                             'status_proses' => 'Diproses',
                             'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                         ];
-                        $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                        $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                     }
                 }
 
@@ -792,12 +807,15 @@ class MonitoringMesinSteamController extends BaseController
 
     public function prosesUlangMonitoringMesinSteam($id = null)
     {
-        $dataMonitoringMesinSteamBerdasarkanId = $this->monitoringMesinSteamModel->find($id);
+        $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+        $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
+        $dataMonitoringMesinSteamBerdasarkanId = $monitoringMesinSteamModel->find($id);
         if (!$dataMonitoringMesinSteamBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $dataDetail = $this->monitoringMesinSteamDetailModel->dataDetailMonitoringMesinSteamBerdasarkanIdMaster($id);
+        $dataDetail = $monitoringMesinSteamDetailModel->dataDetailMonitoringMesinSteamBerdasarkanIdMaster($id);
 
         $jamSekarang = date('H:i');
         $shift = '';
@@ -807,11 +825,14 @@ class MonitoringMesinSteamController extends BaseController
             $shift = 'sore';
         }
 
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
+
         $data = [
             'title' => 'Proses Ulang Monitoring Mesin Steam',
             'header' => 'Monitoring Mesin Steam',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinSteam' => $dataMonitoringMesinSteamBerdasarkanId,
             'shift' => $shift,
             'tanggalSekarang' => date('Y-m-d'),
@@ -825,7 +846,10 @@ class MonitoringMesinSteamController extends BaseController
     public function hapusMonitoringMesinSteam($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinSteamBerdasarkanId = $this->monitoringMesinSteamModel->find($id);
+            $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+            $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+
+            $dataMonitoringMesinSteamBerdasarkanId = $monitoringMesinSteamModel->find($id);
             if (!$dataMonitoringMesinSteamBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -838,7 +862,7 @@ class MonitoringMesinSteamController extends BaseController
                 );
             }
 
-            $deleteMonitoringMesinSteam = $this->monitoringMesinSteamModel->delete($id, false);
+            $deleteMonitoringMesinSteam = $monitoringMesinSteamModel->delete($id, false);
             $deleteMonitoringMesinSteamLog = ($deleteMonitoringMesinSteam) ? "Delete" : "Gagal delete";
             $deleteMonitoringMesinSteamLog .= " monitoring mesin steam dengan id " . $id;
             $this->logModel->insert([
@@ -857,13 +881,13 @@ class MonitoringMesinSteamController extends BaseController
                     ]
                 );
             }
-            $dataDetailAlat = $this->monitoringMesinSteamDetailModel->where('id_monitoring_mesin_steam', $id)->findAll();
-
+            $dataDetailAlat = $monitoringMesinSteamDetailModel->where('id_monitoring_mesin_steam', $id)->findAll();
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
             foreach ($dataDetailAlat as $detail) {
                 $idAlatKotor = $detail['id_detail_penerimaan_alat_kotor'];
                 $jumlah = $detail['jumlah'];
                 if ($idAlatKotor && !$dataMonitoringMesinSteamBerdasarkanId['proses_ulang']) {
-                    $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                    $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                     $updateData = [
                         'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -872,7 +896,7 @@ class MonitoringMesinSteamController extends BaseController
                     if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                         $updateData['status_proses'] = '';
                     }
-                    $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                    $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
                 }
             }
 
@@ -890,36 +914,42 @@ class MonitoringMesinSteamController extends BaseController
 
     public function verifikasiMonitoringMesinSteam($id)
     {
-        $dataMonitoringMesinSteamBerdasarkanId = $this->monitoringMesinSteamModel->find($id);
+        $monitoringMesinSteamModel = model(MonitoringMesinSteamModel::class);
+        $monitoringMesinSteamDetailModel = model(MonitoringMesinSteamDetailModel::class);
+        $monitoringMesinSteamOperatorModel = model(MonitoringMesinSteamOperatorModel::class);
+        $monitoringMesinSteamVerifikasiModel = model(MonitoringMesinSteamVerifikasiModel::class);
+
+        $dataMonitoringMesinSteamBerdasarkanId = $monitoringMesinSteamModel->find($id);
         if (!$dataMonitoringMesinSteamBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $operatorMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamOperatorModel
+        $operatorMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamOperatorModel
             ->operatorMonitoringMesinSteamBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataDetailMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamDetailModel
+        $dataDetailMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamDetailModel
             ->dataDetailMonitoringMesinSteamBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster = $this->monitoringMesinSteamVerifikasiModel
+        $dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster = $monitoringMesinSteamVerifikasiModel
             ->where('id_monitoring_mesin_steam', $id)
             ->first();
 
-        $dataProsesUlang = $this->monitoringMesinSteamModel
+        $dataProsesUlang = $monitoringMesinSteamModel
             ->where('proses_ulang', $id)
             ->where('deleted_at', null)
             ->get()
             ->getNumRows();
 
         $idAlatKotor = array_column($dataDetailMonitoringMesinSteamBerdasarkanIdMaster, 'id_detail_penerimaan_alat_kotor');
-        $dataDistribusi = $this->penerimaanAlatKotorDetailModel
+        $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+        $dataDistribusi = $penerimaanAlatKotorDetailModel
             ->dataAlatKotorDistribusiBerdasarkanId($idAlatKotor)
             ->getNumRows();
 
         $where = "sisa_distribusi < jumlah";
-        $distribusiBmhp = $this->monitoringMesinSteamDetailModel
+        $distribusiBmhp = $monitoringMesinSteamDetailModel
             ->where('id_monitoring_mesin_steam', $id)
             ->where('id_ruangan', 'CSSD')
             ->where(new RawSql($where))
@@ -927,13 +957,15 @@ class MonitoringMesinSteamController extends BaseController
             ->get()
             ->getNumRows();
 
+        $pegawaiModel = model(PegawaiModel::class);
+
         $data = [
             'title' => 'Verifikasi Monitoring Mesin Steam',
             'header' => 'Monitoring Mesin Steam',
             'dataMesinSteam' => $dataMonitoringMesinSteamBerdasarkanId,
             'operator' => $operatorMonitoringMesinSteamBerdasarkanIdMaster,
             'detailAlat' => $dataDetailMonitoringMesinSteamBerdasarkanIdMaster,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
             'dataVerifikasi' => $dataVerifikasiMonitoringMesinSteamBerdasarkanIdMaster,
             'prosesUlang' => $dataProsesUlang,
             'dataDistribusi' => $dataDistribusi,
@@ -1078,14 +1110,15 @@ class MonitoringMesinSteamController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinSteamVerifikasiModel->find($id);
+            $monitoringMesinSteamVerifikasiModel = model(MonitoringMesinSteamVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinSteamVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 $dataId = [
                     'id' => generateUUID(),
                     'id_monitoring_mesin_steam' => $id
                 ];
                 $dataInsert = array_merge($dataId, $data);
-                $insertVerifikasiMonitoringMesinSteam = $this->monitoringMesinSteamVerifikasiModel->insert($dataInsert);
+                $insertVerifikasiMonitoringMesinSteam = $monitoringMesinSteamVerifikasiModel->insert($dataInsert);
                 $insertVerifikasiMonitoringMesinSteamLog = ($insertVerifikasiMonitoringMesinSteam) ? "Insert" : "Gagal insert";
                 $insertVerifikasiMonitoringMesinSteamLog .= " verifikasi monitoring mesin steam dengan id " . $insertVerifikasiMonitoringMesinSteam;
                 $this->logModel->insert([
@@ -1163,7 +1196,7 @@ class MonitoringMesinSteamController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $updateVerifikasiMonitoringMesinSteam = $this->monitoringMesinSteamVerifikasiModel->update($id, $dataUpdate);
+            $updateVerifikasiMonitoringMesinSteam = $monitoringMesinSteamVerifikasiModel->update($id, $dataUpdate);
             $updateVerifikasiMonitoringMesinSteamLog = ($updateVerifikasiMonitoringMesinSteam) ? "Update" : "Gagal update";
             $updateVerifikasiMonitoringMesinSteamLog .= " verifikasi monitoring mesin steam dengan id " . $updateVerifikasiMonitoringMesinSteam;
             $this->logModel->insert([
@@ -1199,7 +1232,8 @@ class MonitoringMesinSteamController extends BaseController
     public function hapusVerifikasi($id)
     {
         if ($this->request->isAJAX()) {
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinSteamVerifikasiModel->find($id);
+            $monitoringMesinSteamVerifikasiModel = model(MonitoringMesinSteamVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinSteamVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -1212,7 +1246,7 @@ class MonitoringMesinSteamController extends BaseController
                 );
             }
 
-            $deleteVerifikasiMonitoringMesinSteam = $this->monitoringMesinSteamVerifikasiModel->delete($id, false);
+            $deleteVerifikasiMonitoringMesinSteam = $monitoringMesinSteamVerifikasiModel->delete($id, false);
             $deleteVerifikasiMonitoringMesinSteamLog = ($deleteVerifikasiMonitoringMesinSteam) ? "Delete" : "Gagal delete";
             $deleteVerifikasiMonitoringMesinSteamLog .= " verifikasi monitoring mesin steam dengan id " . $id;
             $this->logModel->insert([

@@ -5,9 +5,7 @@ namespace App\Controllers\PackingalatControllers;
 use App\Controllers\BaseController;
 use App\Models\DataModels\DepartemenModel;
 use App\Models\DataModels\PegawaiModel;
-use App\Models\DataModels\SetAlatModel;
 use App\Models\DekontaminasiModels\PenerimaanAlatKotorDetailModel;
-use App\Models\DekontaminasiModels\PenerimaanAlatKotorModel;
 use App\Models\PackingAlatModels\MonitoringMesinEogDetailModel;
 use App\Models\PackingAlatModels\MonitoringMesinEogModel;
 use App\Models\PackingAlatModels\MonitoringMesinEogOperatorModel;
@@ -15,30 +13,11 @@ use App\Models\PackingAlatModels\MonitoringMesinEogVerifikasiModel;
 
 class MonitoringMesinEogController extends BaseController
 {
-
-    protected $pegawaiModel;
-    protected $departemenModel;
-    protected $setAlatModel;
-    protected $penerimaanAlatKotorModel;
-    protected $penerimaanAlatKotorDetailModel;
-    protected $monitoringMesinEogModel;
-    protected $monitoringMesinEogDetailModel;
-    protected $monitoringMesinEogOperatorModel;
-    protected $monitoringMesinEogVerifikasiModel;
     protected $valid;
     protected $validation;
 
     public function __construct()
     {
-        $this->pegawaiModel = new PegawaiModel();
-        $this->departemenModel = new DepartemenModel();
-        $this->penerimaanAlatKotorModel = new PenerimaanAlatKotorModel();
-        $this->penerimaanAlatKotorDetailModel = new PenerimaanAlatKotorDetailModel();
-        $this->monitoringMesinEogModel = new MonitoringMesinEogModel();
-        $this->monitoringMesinEogDetailModel = new MonitoringMesinEogDetailModel();
-        $this->monitoringMesinEogOperatorModel = new MonitoringMesinEogOperatorModel();
-        $this->monitoringMesinEogVerifikasiModel = new MonitoringMesinEogVerifikasiModel();
-        $this->setAlatModel = new SetAlatModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -62,14 +41,16 @@ class MonitoringMesinEogController extends BaseController
         } elseif ($jamSekarang >= '14:01' && $jamSekarang <= '21:00') {
             $shift = 'sore';
         }
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
         $data = [
             'title' => 'Tambah Monitoring Mesin EOG',
             'header' => 'Monitoring Mesin EOG (Gas Ethylen Oxyd)',
             'tglSekarang' => date('Y-m-d'),
             'jamSekarang' => $jamSekarang,
             'shift' => $shift,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
         ];
         return view('packingalat/monitoringmesineog/tambah_monitoringmesineog_view', $data);
     }
@@ -81,11 +62,15 @@ class MonitoringMesinEogController extends BaseController
             $tglAkhir = $this->request->getPost('tglAkhir') . " 23:59:59";
             $start = $this->request->getPost('start');
             $limit = $this->request->getPost('length');
-            $dataMonitoringMesinEogBerdasarkanTanggaldanLimit = $this->monitoringMesinEogModel
+
+            $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+            $monitoringMesinEogVerifikasiModel = model(MonitoringMesinEogVerifikasiModel::class);
+
+            $dataMonitoringMesinEogBerdasarkanTanggaldanLimit = $monitoringMesinEogModel
                 ->dataMonitoringMesinEogBerdasarkanTanggaldanLimit($tglAwal, $tglAkhir, $start, $limit)
                 ->getResultArray();
 
-            $jumlahDataMonitoringMesinEogBerdasarkanTanggal = $this->monitoringMesinEogModel
+            $jumlahDataMonitoringMesinEogBerdasarkanTanggal = $monitoringMesinEogModel
                 ->dataMonitoringMesinEogBerdasarkanTanggal($tglAwal, $tglAkhir)
                 ->getNumRows();
 
@@ -98,7 +83,7 @@ class MonitoringMesinEogController extends BaseController
                 $tombolAksi = "<div class=\"d-flex justify-content-center\">" . $a . $form . "</div>";
                 $aksi = $tombolAksi;
 
-                $dataVerifikasi = $this->monitoringMesinEogVerifikasiModel
+                $dataVerifikasi = $monitoringMesinEogVerifikasiModel
                     ->dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster($data['id'])
                     ->getFirstRow('array');
                 $prosesDari = "";
@@ -122,7 +107,7 @@ class MonitoringMesinEogController extends BaseController
 
                         $aksi = "<a href=\"" . base_url('monitoring-mesin-eog/proses-ulang/' . $data['id']) . "\" data-popup=\"tooltip\" title=\"Proses Ulang\" class=\"btn btn-primary btn-sm border-0 ml-1\"><i class=\"fa-solid fa-repeat\"></i></a>";
 
-                        $dataProsesUlang = $this->monitoringMesinEogModel
+                        $dataProsesUlang = $monitoringMesinEogModel
                             ->where('proses_ulang', $data['id'])
                             ->where('deleted_at', null)
                             ->get()->getNumRows();
@@ -163,7 +148,12 @@ class MonitoringMesinEogController extends BaseController
     public function detailMonitoringMesinEog($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinEogBerdasarkanId = $this->monitoringMesinEogModel->find($id);
+            $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+            $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+            $monitoringMesinEogOperatorModel = model(MonitoringMesinEogOperatorModel::class);
+            $monitoringMesinEogVerifikasiModel = model(MonitoringMesinEogVerifikasiModel::class);
+
+            $dataMonitoringMesinEogBerdasarkanId = $monitoringMesinEogModel->find($id);
             if (!$dataMonitoringMesinEogBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -173,14 +163,14 @@ class MonitoringMesinEogController extends BaseController
                 );
             }
 
-            $operatorMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogOperatorModel
+            $operatorMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogOperatorModel
                 ->operatorMonitoringMesinEogBerdasarkanIdMaster($id)
                 ->getResultArray();
 
-            $dataDetailMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogDetailModel
+            $dataDetailMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogDetailModel
                 ->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id);
 
-            $dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogVerifikasiModel
+            $dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogVerifikasiModel
                 ->dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster($id)
                 ->getFirstRow('array');
 
@@ -282,8 +272,11 @@ class MonitoringMesinEogController extends BaseController
                 'siklus' => $siklus,
             ];
 
+            $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+            $monitoringMesinEogOperatorModel = model(MonitoringMesinEogOperatorModel::class);
+
             if ($prosesUlang) {
-                $dataMesinEog = $this->monitoringMesinEogModel->find($prosesUlang);
+                $dataMesinEog = $monitoringMesinEogModel->find($prosesUlang);
                 if (!$dataMesinEog) {
                     return $this->response->setJSON(
                         [
@@ -297,7 +290,7 @@ class MonitoringMesinEogController extends BaseController
                     );
                 }
 
-                $dataProsesUlang = $this->monitoringMesinEogModel
+                $dataProsesUlang = $monitoringMesinEogModel
                     ->where('proses_ulang', $prosesUlang)
                     ->where('deleted_at', null)
                     ->get()->getNumRows();
@@ -319,7 +312,7 @@ class MonitoringMesinEogController extends BaseController
                 $data['proses_ulang'] = $prosesUlang;
             }
 
-            $insertMonitoringMesinEog = $this->monitoringMesinEogModel->insert($data);
+            $insertMonitoringMesinEog = $monitoringMesinEogModel->insert($data);
             $insertMonitoringMesinEogLog = ($insertMonitoringMesinEog) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinEogLog .= " monitoring mesin eog dengan id " . $insertMonitoringMesinEog;
             $this->logModel->insert([
@@ -347,7 +340,7 @@ class MonitoringMesinEogController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinEogOperator, $dataDetail);
             }
-            $insertMonitoringMesinEogOperator = $this->monitoringMesinEogOperatorModel->insertMultiple($dataInsertMonitoringMesinEogOperator);
+            $insertMonitoringMesinEogOperator = $monitoringMesinEogOperatorModel->insertMultiple($dataInsertMonitoringMesinEogOperator);
             $insertMonitoringMesinEogOperatorLog = ($insertMonitoringMesinEogOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinEogOperatorLog .= " operator monitoring mesin eog dengan id master " . $insertMonitoringMesinEog;
             $this->logModel->insert([
@@ -355,7 +348,7 @@ class MonitoringMesinEogController extends BaseController
                 "log" => $insertMonitoringMesinEogOperatorLog
             ]);
             if (!$insertMonitoringMesinEogOperator) {
-                $this->monitoringMesinEogModel->delete($insertMonitoringMesinEog);
+                $monitoringMesinEogModel->delete($insertMonitoringMesinEog);
                 return $this->response->setJSON(
                     [
                         'sukses' => false,
@@ -367,18 +360,19 @@ class MonitoringMesinEogController extends BaseController
                     ]
                 );
             }
-
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+            $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
             foreach ($dataAlat as $detail) {
                 $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                 $jumlah = $detail['jumlah'];
                 $alat = $detail['alat'];
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
 
                     if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
-                        $this->monitoringMesinEogModel->delete($insertMonitoringMesinEog);
-                        $this->monitoringMesinEogOperatorModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
+                        $monitoringMesinEogModel->delete($insertMonitoringMesinEog);
+                        $monitoringMesinEogOperatorModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
 
                         return $this->response->setJSON(
                             [
@@ -401,11 +395,11 @@ class MonitoringMesinEogController extends BaseController
                     'jumlah' => $jumlah,
                 ];
 
-                $insertMonitoringMesinEogDetail = $this->monitoringMesinEogDetailModel->insert($dataDetail, false);
+                $insertMonitoringMesinEogDetail = $monitoringMesinEogDetailModel->insert($dataDetail, false);
                 if (!$insertMonitoringMesinEogDetail) {
-                    $this->monitoringMesinEogModel->delete($insertMonitoringMesinEog);
-                    $this->monitoringMesinEogOperatorModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
-                    $this->monitoringMesinEogDetailModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
+                    $monitoringMesinEogModel->delete($insertMonitoringMesinEog);
+                    $monitoringMesinEogOperatorModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
+                    $monitoringMesinEogDetailModel->where('id_monitoring_mesin_eog', $insertMonitoringMesinEog)->delete();
                     $insertMonitoringMesinEogDetailLog = "Gagal insert detail monitoring mesin eog dengan id master " . $insertMonitoringMesinEog;
                     $this->logModel->insert([
                         "id_user" => session()->get('id_user'),
@@ -425,12 +419,12 @@ class MonitoringMesinEogController extends BaseController
                 }
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
                     $dataUpdateDetailPenerimaanAlatKotor = [
                         'status_proses' => 'Diproses',
                         'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                     ];
-                    $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                    $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                 }
             }
 
@@ -454,7 +448,11 @@ class MonitoringMesinEogController extends BaseController
 
     public function editMonitoringMesinEog($id = null)
     {
-        $dataMonitoringMesinEogBerdasarkanId = $this->monitoringMesinEogModel->find($id);
+        $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+        $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+        $monitoringMesinEogOperatorModel = model(MonitoringMesinEogOperatorModel::class);
+
+        $dataMonitoringMesinEogBerdasarkanId = $monitoringMesinEogModel->find($id);
         if (!$dataMonitoringMesinEogBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
@@ -463,18 +461,21 @@ class MonitoringMesinEogController extends BaseController
             return redirect()->to('/monitoring-mesin-eog');
         }
 
-        $dataOperator = $this->monitoringMesinEogOperatorModel
-            ->operatorMonitoringMesinEogBerdasarkanIdMaster($id)
-            ->getResultArray();
-
-        $dataDetail = $this->monitoringMesinEogDetailModel
-            ->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id);
-
+        
+        $dataOperator = $monitoringMesinEogOperatorModel
+        ->operatorMonitoringMesinEogBerdasarkanIdMaster($id)
+        ->getResultArray();
+        
+        $dataDetail = $monitoringMesinEogDetailModel
+        ->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id);
+        
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
         $data = [
             'title' => 'Edit Monitoring Mesin EOG',
             'header' => 'Monitoring Mesin EOG (Gas Ethylen Oxyd)',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinEog' => $dataMonitoringMesinEogBerdasarkanId,
             'dataOperator' => $dataOperator,
             'dataDetail' => $dataDetail
@@ -485,7 +486,8 @@ class MonitoringMesinEogController extends BaseController
     public function hapusDetailMonitoringMesinEog($id)
     {
         if ($this->request->isAJAX()) {
-            $dataDetail = $this->monitoringMesinEogDetailModel->find($id);
+            $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+            $dataDetail = $monitoringMesinEogDetailModel->find($id);
             if (!$dataDetail) {
                 return $this->response->setJSON(
                     [
@@ -498,7 +500,7 @@ class MonitoringMesinEogController extends BaseController
                 );
             }
 
-            $deleteDetail = $this->monitoringMesinEogDetailModel->delete($id, false);
+            $deleteDetail = $monitoringMesinEogDetailModel->delete($id, false);
             $deleteDetailLog = ($deleteDetail) ? "Delete" : "Gagal delete";
             $deleteDetailLog .= " detail monitoring mesin eog dengan id " . $id;
             $this->logModel->insert([
@@ -516,11 +518,11 @@ class MonitoringMesinEogController extends BaseController
                     ]
                 );
             }
-
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -529,7 +531,7 @@ class MonitoringMesinEogController extends BaseController
                 if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                     $updateData['status_proses'] = '';
                 }
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
             return $this->response->setJSON(
@@ -547,7 +549,8 @@ class MonitoringMesinEogController extends BaseController
     public function batalHapusDetailMonitoringMesinEog($id)
     {
         if ($this->request->isAJAX()) {
-            $updateDetail = $this->monitoringMesinEogDetailModel->update($id, ['deleted_at' => null], false);
+            $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+            $updateDetail = $monitoringMesinEogDetailModel->update($id, ['deleted_at' => null], false);
             $updateDetailLog = ($updateDetail) ? "Update" : "Gagal update";
             $updateDetailLog .= " 'Batal Hapus' detail monitoring mesin eog dengan id " . $id;
             $this->logModel->insert([
@@ -565,20 +568,21 @@ class MonitoringMesinEogController extends BaseController
                     ]
                 );
             }
-            $dataDetail = $this->monitoringMesinEogDetailModel->find($id);
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+            $dataDetail = $monitoringMesinEogDetailModel->find($id);
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] - (int)$jumlah,
                     'status_proses' => 'Diproses'
                 ];
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
-            $dataReturn = $this->monitoringMesinEogDetailModel
+            $dataReturn = $monitoringMesinEogDetailModel
                 ->dataDetailMonitoringMesinEogBerdasarkanId($id)
                 ->getFirstRow('array');
 
@@ -636,7 +640,10 @@ class MonitoringMesinEogController extends BaseController
                 'siklus' => $siklus,
             ];
 
-            $updateMonitoringMesinEog = $this->monitoringMesinEogModel->update($id, $data, false);
+            $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+            $monitoringMesinEogOperatorModel = model(MonitoringMesinEogOperatorModel::class);
+
+            $updateMonitoringMesinEog = $monitoringMesinEogModel->update($id, $data, false);
             $updateMonitoringMesinEogLog = ($updateMonitoringMesinEog) ? "Update" : "Gagal update";
             $updateMonitoringMesinEogLog .= " monitoring mesin eog dengan id " . $id;
             $this->logModel->insert([
@@ -656,7 +663,7 @@ class MonitoringMesinEogController extends BaseController
                 );
             }
 
-            $deleteOperator = $this->monitoringMesinEogOperatorModel
+            $deleteOperator = $monitoringMesinEogOperatorModel
                 ->where('id_monitoring_mesin_eog', $id)
                 ->delete();
 
@@ -668,7 +675,7 @@ class MonitoringMesinEogController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinEogOperator, $dataDetail);
             }
-            $insertMonitoringMesinEogOperator = $this->monitoringMesinEogOperatorModel
+            $insertMonitoringMesinEogOperator = $monitoringMesinEogOperatorModel
                 ->insertMultiple($dataInsertMonitoringMesinEogOperator);
             $insertMonitoringMesinEogOperatorLog = ($insertMonitoringMesinEogOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinEogOperatorLog .= " operator monitoring mesin eog dengan id master " . $id;
@@ -690,13 +697,15 @@ class MonitoringMesinEogController extends BaseController
             }
 
             if ($dataAlat) {
+                $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+                $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
                 foreach ($dataAlat as $detail) {
                     $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                     $jumlah = $detail['jumlah'];
                     $alat = $detail['alat'];
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
@@ -721,7 +730,7 @@ class MonitoringMesinEogController extends BaseController
                         'jumlah' => $jumlah,
                     ];
 
-                    $insertMonitoringMesinEogDetail = $this->monitoringMesinEogDetailModel
+                    $insertMonitoringMesinEogDetail = $monitoringMesinEogDetailModel
                         ->insert($dataDetail, false);
 
                     if (!$insertMonitoringMesinEogDetail) {
@@ -744,14 +753,14 @@ class MonitoringMesinEogController extends BaseController
                     }
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         $dataUpdateDetailPenerimaanAlatKotor = [
                             'status_proses' => 'Diproses',
                             'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                         ];
-                        $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                        $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                     }
                 }
 
@@ -776,12 +785,15 @@ class MonitoringMesinEogController extends BaseController
 
     public function prosesUlangMonitoringMesinEog($id = null)
     {
-        $dataMonitoringMesinEogBerdasarkanId = $this->monitoringMesinEogModel->find($id);
+        $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+        $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+
+        $dataMonitoringMesinEogBerdasarkanId = $monitoringMesinEogModel->find($id);
         if (!$dataMonitoringMesinEogBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $dataDetail = $this->monitoringMesinEogDetailModel->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id);
+        $dataDetail = $monitoringMesinEogDetailModel->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id);
 
         $jamSekarang = date('H:i');
         $shift = '';
@@ -791,11 +803,13 @@ class MonitoringMesinEogController extends BaseController
             $shift = 'sore';
         }
 
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
         $data = [
             'title' => 'Proses Ulang Monitoring Mesin EOG',
             'header' => 'Monitoring Mesin EOG (Gas Ethylen Oxyd)',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinEog' => $dataMonitoringMesinEogBerdasarkanId,
             'shift' => $shift,
             'tanggalSekarang' => date('Y-m-d'),
@@ -809,7 +823,10 @@ class MonitoringMesinEogController extends BaseController
     public function hapusMonitoringMesinEog($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinEogBerdasarkanId = $this->monitoringMesinEogModel->find($id);
+            $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+            $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+
+            $dataMonitoringMesinEogBerdasarkanId = $monitoringMesinEogModel->find($id);
             if (!$dataMonitoringMesinEogBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -822,7 +839,7 @@ class MonitoringMesinEogController extends BaseController
                 );
             }
 
-            $deleteMonitoringMesinEog = $this->monitoringMesinEogModel->delete($id, false);
+            $deleteMonitoringMesinEog = $monitoringMesinEogModel->delete($id, false);
             $deleteMonitoringMesinEogLog = ($deleteMonitoringMesinEog) ? "Delete" : "Gagal delete";
             $deleteMonitoringMesinEogLog .= " monitoring mesin eog dengan id " . $id;
             $this->logModel->insert([
@@ -841,13 +858,13 @@ class MonitoringMesinEogController extends BaseController
                     ]
                 );
             }
-            $dataDetailAlat = $this->monitoringMesinEogDetailModel->where('id_monitoring_mesin_eog', $id)->findAll();
-
+            $dataDetailAlat = $monitoringMesinEogDetailModel->where('id_monitoring_mesin_eog', $id)->findAll();
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
             foreach ($dataDetailAlat as $detail) {
                 $idAlatKotor = $detail['id_detail_penerimaan_alat_kotor'];
                 $jumlah = $detail['jumlah'];
                 if ($idAlatKotor && !$dataMonitoringMesinEogBerdasarkanId['proses_ulang']) {
-                    $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                    $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                     $updateData = [
                         'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -856,7 +873,7 @@ class MonitoringMesinEogController extends BaseController
                     if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                         $updateData['status_proses'] = '';
                     }
-                    $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                    $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
                 }
             }
 
@@ -874,41 +891,48 @@ class MonitoringMesinEogController extends BaseController
 
     public function verifikasiMonitoringMesinEog($id)
     {
-        $dataMonitoringMesinEogBerdasarkanId = $this->monitoringMesinEogModel->find($id);
+        $monitoringMesinEogModel = model(MonitoringMesinEogModel::class);
+        $monitoringMesinEogDetailModel = model(MonitoringMesinEogDetailModel::class);
+        $monitoringMesinEogOperatorModel = model(MonitoringMesinEogOperatorModel::class);
+        $monitoringMesinEogVerifikasiModel = model(MonitoringMesinEogVerifikasiModel::class);
+
+        $dataMonitoringMesinEogBerdasarkanId = $monitoringMesinEogModel->find($id);
         if (!$dataMonitoringMesinEogBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
-
-        $operatorMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogOperatorModel
+        
+        $operatorMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogOperatorModel
             ->operatorMonitoringMesinEogBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataDetailMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogDetailModel
+            $dataDetailMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogDetailModel
             ->dataDetailMonitoringMesinEogBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster = $this->monitoringMesinEogVerifikasiModel
+        $dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster = $monitoringMesinEogVerifikasiModel
             ->where('id_monitoring_mesin_eog', $id)
             ->first();
 
-        $dataProsesUlang = $this->monitoringMesinEogModel
+        $dataProsesUlang = $monitoringMesinEogModel
             ->where('proses_ulang', $id)
             ->where('deleted_at', null)
             ->get()
             ->getNumRows();
 
         $idAlatKotor = array_column($dataDetailMonitoringMesinEogBerdasarkanIdMaster, 'id_detail_penerimaan_alat_kotor');
-        $dataDistribusi = $this->penerimaanAlatKotorDetailModel
+        $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+        $dataDistribusi = $penerimaanAlatKotorDetailModel
             ->dataAlatKotorDistribusiBerdasarkanId($idAlatKotor)
             ->getNumRows();
-
+            
+        $pegawaiModel = model(PegawaiModel::class);
         $data = [
             'title' => 'Verifikasi Monitoring Mesin EOG',
             'header' => 'Monitoring Mesin EOG (Gas Ethylen Oxyd)',
             'dataMesinEog' => $dataMonitoringMesinEogBerdasarkanId,
             'operator' => $operatorMonitoringMesinEogBerdasarkanIdMaster,
             'detailAlat' => $dataDetailMonitoringMesinEogBerdasarkanIdMaster,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
             'dataVerifikasi' => $dataVerifikasiMonitoringMesinEogBerdasarkanIdMaster,
             'prosesUlang' => $dataProsesUlang,
             'dataDistribusi' => $dataDistribusi
@@ -1052,14 +1076,15 @@ class MonitoringMesinEogController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinEogVerifikasiModel->find($id);
+            $monitoringMesinEogVerifikasiModel = model(MonitoringMesinEogVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinEogVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 $dataId = [
                     'id' => generateUUID(),
                     'id_monitoring_mesin_eog' => $id
                 ];
                 $dataInsert = array_merge($dataId, $data);
-                $insertVerifikasiMonitoringMesinEog = $this->monitoringMesinEogVerifikasiModel->insert($dataInsert);
+                $insertVerifikasiMonitoringMesinEog = $monitoringMesinEogVerifikasiModel->insert($dataInsert);
                 $insertVerifikasiMonitoringMesinEogLog = ($insertVerifikasiMonitoringMesinEog) ? "Insert" : "Gagal insert";
                 $insertVerifikasiMonitoringMesinEogLog .= " verifikasi monitoring mesin eog dengan id " . $insertVerifikasiMonitoringMesinEog;
                 $this->logModel->insert([
@@ -1137,7 +1162,7 @@ class MonitoringMesinEogController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $updateVerifikasiMonitoringMesinEog = $this->monitoringMesinEogVerifikasiModel->update($id, $dataUpdate);
+            $updateVerifikasiMonitoringMesinEog = $monitoringMesinEogVerifikasiModel->update($id, $dataUpdate);
             $updateVerifikasiMonitoringMesinEogLog = ($updateVerifikasiMonitoringMesinEog) ? "Update" : "Gagal update";
             $updateVerifikasiMonitoringMesinEogLog .= " verifikasi monitoring mesin eog dengan id " . $updateVerifikasiMonitoringMesinEog;
             $this->logModel->insert([
@@ -1173,7 +1198,8 @@ class MonitoringMesinEogController extends BaseController
     public function hapusVerifikasi($id)
     {
         if ($this->request->isAJAX()) {
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinEogVerifikasiModel->find($id);
+            $monitoringMesinEogVerifikasiModel = model(MonitoringMesinEogVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinEogVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -1186,7 +1212,7 @@ class MonitoringMesinEogController extends BaseController
                 );
             }
 
-            $deleteVerifikasiMonitoringMesinEog = $this->monitoringMesinEogVerifikasiModel->delete($id, false);
+            $deleteVerifikasiMonitoringMesinEog = $monitoringMesinEogVerifikasiModel->delete($id, false);
             $deleteVerifikasiMonitoringMesinEogLog = ($deleteVerifikasiMonitoringMesinEog) ? "Delete" : "Gagal delete";
             $deleteVerifikasiMonitoringMesinEogLog .= " verifikasi monitoring mesin eog dengan id " . $id;
             $this->logModel->insert([

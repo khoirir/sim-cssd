@@ -8,15 +8,11 @@ use App\Models\PackingAlatModels\UjiSealerPouchsModel;
 
 class UjiSealerPouchsController extends BaseController
 {
-    // protected $pegawaiModel;
-    // protected $ujiSealerPouchsModel;
     protected $valid;
     protected $validation;
 
     public function __construct()
     {
-        // $this->pegawaiModel = new PegawaiModel();
-        // $this->ujiSealerPouchsModel = new UjiSealerPouchsModel();
         $this->validation = \Config\Services::validation();
     }
     public function index()

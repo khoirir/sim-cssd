@@ -8,15 +8,11 @@ use App\Models\DataModels\DataSatuanModel;
 
 class DataBmhpController extends BaseController
 {
-    // protected $dataBmhpModel;
-    // protected $dataSatuanModel;
     protected $valid;
     protected $validation;
 
     public function __construct()
     {
-        // $this->dataBmhpModel = new DataBmhpModel();
-        // $this->dataSatuanModel = new DataSatuanModel();
         $this->validation = \Config\Services::validation();
     }
 

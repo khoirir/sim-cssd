@@ -9,14 +9,6 @@ use App\Models\DistribusiModels\PermintaanBmhpSterilModel;
 
 class BmhpSterilController extends BaseController
 {
-    // protected $dataBmhpModel;
-    // protected $permintaanBmhpSterilModel;
-    public function __construct()
-    {
-        // $this->dataBmhpModel = new DataBmhpModel();
-        // $this->permintaanBmhpSterilModel = new PermintaanBmhpSterilModel();
-    }
-
     public function index()
     {
         $data = [

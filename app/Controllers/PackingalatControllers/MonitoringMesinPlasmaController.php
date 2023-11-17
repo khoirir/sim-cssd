@@ -5,9 +5,7 @@ namespace App\Controllers\PackingalatControllers;
 use App\Controllers\BaseController;
 use App\Models\DataModels\DepartemenModel;
 use App\Models\DataModels\PegawaiModel;
-use App\Models\DataModels\SetAlatModel;
 use App\Models\DekontaminasiModels\PenerimaanAlatKotorDetailModel;
-use App\Models\DekontaminasiModels\PenerimaanAlatKotorModel;
 use App\Models\PackingAlatModels\MonitoringMesinPlasmaDetailModel;
 use App\Models\PackingAlatModels\MonitoringMesinPlasmaModel;
 use App\Models\PackingAlatModels\MonitoringMesinPlasmaOperatorModel;
@@ -15,30 +13,11 @@ use App\Models\PackingAlatModels\MonitoringMesinPlasmaVerifikasiModel;
 
 class MonitoringMesinPlasmaController extends BaseController
 {
-
-    protected $pegawaiModel;
-    protected $departemenModel;
-    protected $setAlatModel;
-    protected $penerimaanAlatKotorModel;
-    protected $penerimaanAlatKotorDetailModel;
-    protected $monitoringMesinPlasmaModel;
-    protected $monitoringMesinPlasmaDetailModel;
-    protected $monitoringMesinPlasmaOperatorModel;
-    protected $monitoringMesinPlasmaVerifikasiModel;
     protected $valid;
     protected $validation;
 
     public function __construct()
     {
-        $this->pegawaiModel = new PegawaiModel();
-        $this->departemenModel = new DepartemenModel();
-        $this->penerimaanAlatKotorModel = new PenerimaanAlatKotorModel();
-        $this->penerimaanAlatKotorDetailModel = new PenerimaanAlatKotorDetailModel();
-        $this->monitoringMesinPlasmaModel = new MonitoringMesinPlasmaModel();
-        $this->monitoringMesinPlasmaDetailModel = new MonitoringMesinPlasmaDetailModel();
-        $this->monitoringMesinPlasmaOperatorModel = new MonitoringMesinPlasmaOperatorModel();
-        $this->monitoringMesinPlasmaVerifikasiModel = new MonitoringMesinPlasmaVerifikasiModel();
-        $this->setAlatModel = new SetAlatModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -52,6 +31,7 @@ class MonitoringMesinPlasmaController extends BaseController
         ];
         return view('packingalat/monitoringmesinplasma/index_monitoringmesinplasma_view', $data);
     }
+    
     public function tambahMonitoringMesinPlasma()
     {
         $jamSekarang = date('H:i');
@@ -61,14 +41,18 @@ class MonitoringMesinPlasmaController extends BaseController
         } elseif ($jamSekarang >= '14:01' && $jamSekarang <= '21:00') {
             $shift = 'sore';
         }
+
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
+
         $data = [
             'title' => 'Tambah Monitoring Mesin Plasma',
             'header' => 'Monitoring Mesin Plasma (H2O2)',
             'tglSekarang' => date('Y-m-d'),
             'jamSekarang' => $jamSekarang,
             'shift' => $shift,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
         ];
         return view('packingalat/monitoringmesinplasma/tambah_monitoringmesinplasma_view', $data);
     }
@@ -80,11 +64,15 @@ class MonitoringMesinPlasmaController extends BaseController
             $tglAkhir = $this->request->getPost('tglAkhir') . " 23:59:59";
             $start = $this->request->getPost('start');
             $limit = $this->request->getPost('length');
-            $dataMonitoringMesinPlasmaBerdasarkanTanggaldanLimit = $this->monitoringMesinPlasmaModel
+
+            $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+            $monitoringMesinPlasmaVerifikasiModel = model(MonitoringMesinPlasmaVerifikasiModel::class);
+
+            $dataMonitoringMesinPlasmaBerdasarkanTanggaldanLimit = $monitoringMesinPlasmaModel
                 ->dataMonitoringMesinPlasmaBerdasarkanTanggaldanLimit($tglAwal, $tglAkhir, $start, $limit)
                 ->getResultArray();
 
-            $jumlahDataMonitoringMesinPlasmaBerdasarkanTanggal = $this->monitoringMesinPlasmaModel
+            $jumlahDataMonitoringMesinPlasmaBerdasarkanTanggal = $monitoringMesinPlasmaModel
                 ->dataMonitoringMesinPlasmaBerdasarkanTanggal($tglAwal, $tglAkhir)
                 ->getNumRows();
 
@@ -97,7 +85,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 $tombolAksi = "<div class=\"d-flex justify-content-center\">" . $a . $form . "</div>";
                 $aksi = $tombolAksi;
 
-                $dataVerifikasi = $this->monitoringMesinPlasmaVerifikasiModel
+                $dataVerifikasi = $monitoringMesinPlasmaVerifikasiModel
                     ->dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster($data['id'])
                     ->getFirstRow('array');
                 $prosesDari = "";
@@ -121,7 +109,7 @@ class MonitoringMesinPlasmaController extends BaseController
 
                         $aksi = "<a href=\"" . base_url('monitoring-mesin-plasma/proses-ulang/' . $data['id']) . "\" data-popup=\"tooltip\" title=\"Proses Ulang\" class=\"btn btn-primary btn-sm border-0 ml-1\"><i class=\"fa-solid fa-repeat\"></i></a>";
 
-                        $dataProsesUlang = $this->monitoringMesinPlasmaModel
+                        $dataProsesUlang = $monitoringMesinPlasmaModel
                             ->where('proses_ulang', $data['id'])
                             ->where('deleted_at', null)
                             ->get()->getNumRows();
@@ -162,7 +150,12 @@ class MonitoringMesinPlasmaController extends BaseController
     public function detailMonitoringMesinPlasma($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinPlasmaBerdasarkanId = $this->monitoringMesinPlasmaModel->find($id);
+            $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+            $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+            $monitoringMesinPlasmaOperatorModel = model(MonitoringMesinPlasmaOperatorModel::class);
+            $monitoringMesinPlasmaVerifikasiModel = model(MonitoringMesinPlasmaVerifikasiModel::class);
+
+            $dataMonitoringMesinPlasmaBerdasarkanId = $monitoringMesinPlasmaModel->find($id);
             if (!$dataMonitoringMesinPlasmaBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -172,14 +165,14 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
-            $operatorMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaOperatorModel
+            $operatorMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaOperatorModel
                 ->operatorMonitoringMesinPlasmaBerdasarkanIdMaster($id)
                 ->getResultArray();
 
-            $dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaDetailModel
+            $dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaDetailModel
                 ->dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster($id);
 
-            $dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaVerifikasiModel
+            $dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaVerifikasiModel
                 ->dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster($id)
                 ->getFirstRow('array');
 
@@ -281,8 +274,9 @@ class MonitoringMesinPlasmaController extends BaseController
                 'siklus' => $siklus,
             ];
 
+            $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
             if ($prosesUlang) {
-                $dataMesinPlasma = $this->monitoringMesinPlasmaModel->find($prosesUlang);
+                $dataMesinPlasma = $monitoringMesinPlasmaModel->find($prosesUlang);
                 if (!$dataMesinPlasma) {
                     return $this->response->setJSON(
                         [
@@ -296,7 +290,7 @@ class MonitoringMesinPlasmaController extends BaseController
                     );
                 }
 
-                $dataProsesUlang = $this->monitoringMesinPlasmaModel
+                $dataProsesUlang = $monitoringMesinPlasmaModel
                     ->where('proses_ulang', $prosesUlang)
                     ->where('deleted_at', null)
                     ->get()->getNumRows();
@@ -318,7 +312,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 $data['proses_ulang'] = $prosesUlang;
             }
 
-            $insertMonitoringMesinPlasma = $this->monitoringMesinPlasmaModel->insert($data);
+            $insertMonitoringMesinPlasma = $monitoringMesinPlasmaModel->insert($data);
             $insertMonitoringMesinPlasmaLog = ($insertMonitoringMesinPlasma) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinPlasmaLog .= " monitoring mesin plasma dengan id " . $insertMonitoringMesinPlasma;
             $this->logModel->insert([
@@ -346,7 +340,8 @@ class MonitoringMesinPlasmaController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinPlasmaOperator, $dataDetail);
             }
-            $insertMonitoringMesinPlasmaOperator = $this->monitoringMesinPlasmaOperatorModel->insertMultiple($dataInsertMonitoringMesinPlasmaOperator);
+            $monitoringMesinPlasmaOperatorModel = model(MonitoringMesinPlasmaOperatorModel::class);
+            $insertMonitoringMesinPlasmaOperator = $monitoringMesinPlasmaOperatorModel->insertMultiple($dataInsertMonitoringMesinPlasmaOperator);
             $insertMonitoringMesinPlasmaOperatorLog = ($insertMonitoringMesinPlasmaOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinPlasmaOperatorLog .= " operator monitoring mesin plasma dengan id master " . $insertMonitoringMesinPlasma;
             $this->logModel->insert([
@@ -354,7 +349,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 "log" => $insertMonitoringMesinPlasmaOperatorLog
             ]);
             if (!$insertMonitoringMesinPlasmaOperator) {
-                $this->monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
+                $monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
                 return $this->response->setJSON(
                     [
                         'sukses' => false,
@@ -367,17 +362,20 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+            $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
             foreach ($dataAlat as $detail) {
                 $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                 $jumlah = $detail['jumlah'];
                 $alat = $detail['alat'];
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
 
                     if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
-                        $this->monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
-                        $this->monitoringMesinPlasmaOperatorModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
+                        $monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
+                        $monitoringMesinPlasmaOperatorModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
 
                         return $this->response->setJSON(
                             [
@@ -400,11 +398,11 @@ class MonitoringMesinPlasmaController extends BaseController
                     'jumlah' => $jumlah,
                 ];
 
-                $insertMonitoringMesinPlasmaDetail = $this->monitoringMesinPlasmaDetailModel->insert($dataDetail, false);
+                $insertMonitoringMesinPlasmaDetail = $monitoringMesinPlasmaDetailModel->insert($dataDetail, false);
                 if (!$insertMonitoringMesinPlasmaDetail) {
-                    $this->monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
-                    $this->monitoringMesinPlasmaOperatorModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
-                    $this->monitoringMesinPlasmaDetailModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
+                    $monitoringMesinPlasmaModel->delete($insertMonitoringMesinPlasma);
+                    $monitoringMesinPlasmaOperatorModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
+                    $monitoringMesinPlasmaDetailModel->where('id_monitoring_mesin_plasma', $insertMonitoringMesinPlasma)->delete();
                     $insertMonitoringMesinPlasmaDetailLog = "Gagal insert detail monitoring mesin plasma dengan id master " . $insertMonitoringMesinPlasma;
                     $this->logModel->insert([
                         "id_user" => session()->get('id_user'),
@@ -424,12 +422,12 @@ class MonitoringMesinPlasmaController extends BaseController
                 }
 
                 if ($idDetailPenerimaanAlatKotor && !$prosesUlang) {
-                    $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
+                    $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel->find($idDetailPenerimaanAlatKotor);
                     $dataUpdateDetailPenerimaanAlatKotor = [
                         'status_proses' => 'Diproses',
                         'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                     ];
-                    $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                    $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                 }
             }
 
@@ -453,7 +451,11 @@ class MonitoringMesinPlasmaController extends BaseController
 
     public function editMonitoringMesinPlasma($id=null)
     {
-        $dataMonitoringMesinPlasmaBerdasarkanId = $this->monitoringMesinPlasmaModel->find($id);
+        $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+        $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+        $monitoringMesinPlasmaOperatorModel = model(MonitoringMesinPlasmaOperatorModel::class);
+
+        $dataMonitoringMesinPlasmaBerdasarkanId = $monitoringMesinPlasmaModel->find($id);
         if (!$dataMonitoringMesinPlasmaBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
@@ -462,18 +464,21 @@ class MonitoringMesinPlasmaController extends BaseController
             return redirect()->to('/monitoring-mesin-plasma');
         }
 
-        $dataOperator = $this->monitoringMesinPlasmaOperatorModel
+        $dataOperator = $monitoringMesinPlasmaOperatorModel
             ->operatorMonitoringMesinPlasmaBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataDetail = $this->monitoringMesinPlasmaDetailModel
+        $dataDetail = $monitoringMesinPlasmaDetailModel
             ->dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster($id);
+
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
 
         $data = [
             'title' => 'Edit Monitoring Mesin Plasma',
             'header' => 'Monitoring Mesin Plasma (H2O2)',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinPlasma' => $dataMonitoringMesinPlasmaBerdasarkanId,
             'dataOperator' => $dataOperator,
             'dataDetail' => $dataDetail
@@ -484,7 +489,9 @@ class MonitoringMesinPlasmaController extends BaseController
     public function hapusDetailMonitoringMesinPlasma($id)
     {
         if ($this->request->isAJAX()) {
-            $dataDetail = $this->monitoringMesinPlasmaDetailModel->find($id);
+            $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
+            $dataDetail = $monitoringMesinPlasmaDetailModel->find($id);
             if (!$dataDetail) {
                 return $this->response->setJSON(
                     [
@@ -497,7 +504,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
-            $deleteDetail = $this->monitoringMesinPlasmaDetailModel->delete($id, false);
+            $deleteDetail = $monitoringMesinPlasmaDetailModel->delete($id, false);
             $deleteDetailLog = ($deleteDetail) ? "Delete" : "Gagal delete";
             $deleteDetailLog .= " detail monitoring mesin plasma dengan id " . $id;
             $this->logModel->insert([
@@ -518,8 +525,9 @@ class MonitoringMesinPlasmaController extends BaseController
 
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -528,7 +536,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                     $updateData['status_proses'] = '';
                 }
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
             return $this->response->setJSON(
@@ -546,7 +554,9 @@ class MonitoringMesinPlasmaController extends BaseController
     public function batalHapusDetailMonitoringMesinPlasma($id)
     {
         if ($this->request->isAJAX()) {
-            $updateDetail = $this->monitoringMesinPlasmaDetailModel->update($id, ['deleted_at' => null], false);
+            $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
+            $updateDetail = $monitoringMesinPlasmaDetailModel->update($id, ['deleted_at' => null], false);
             $updateDetailLog = ($updateDetail) ? "Update" : "Gagal update";
             $updateDetailLog .= " 'Batal Hapus' detail monitoring mesin plasma dengan id " . $id;
             $this->logModel->insert([
@@ -564,20 +574,21 @@ class MonitoringMesinPlasmaController extends BaseController
                     ]
                 );
             }
-            $dataDetail = $this->monitoringMesinPlasmaDetailModel->find($id);
+            $dataDetail = $monitoringMesinPlasmaDetailModel->find($id);
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
             if ($idAlatKotor) {
-                $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                 $updateData = [
                     'sisa' => (int)$dataAlatKotor['sisa'] - (int)$jumlah,
                     'status_proses' => 'Diproses'
                 ];
-                $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
             }
 
-            $dataReturn = $this->monitoringMesinPlasmaDetailModel
+            $dataReturn = $monitoringMesinPlasmaDetailModel
                 ->dataDetailMonitoringMesinPlasmaBerdasarkanId($id)
                 ->getFirstRow('array');
 
@@ -635,7 +646,9 @@ class MonitoringMesinPlasmaController extends BaseController
                 'siklus' => $siklus,
             ];
 
-            $updateMonitoringMesinPlasma = $this->monitoringMesinPlasmaModel->update($id, $data, false);
+            $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+
+            $updateMonitoringMesinPlasma = $monitoringMesinPlasmaModel->update($id, $data, false);
             $updateMonitoringMesinPlasmaLog = ($updateMonitoringMesinPlasma) ? "Update" : "Gagal update";
             $updateMonitoringMesinPlasmaLog .= " monitoring mesin plasma dengan id " . $id;
             $this->logModel->insert([
@@ -655,7 +668,8 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
-            $deleteOperator = $this->monitoringMesinPlasmaOperatorModel
+            $monitoringMesinPlasmaOperatorModel = model(MonitoringMesinPlasmaOperatorModel::class);
+            $deleteOperator = $monitoringMesinPlasmaOperatorModel
                 ->where('id_monitoring_mesin_plasma', $id)
                 ->delete();
 
@@ -667,7 +681,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 ];
                 array_push($dataInsertMonitoringMesinPlasmaOperator, $dataDetail);
             }
-            $insertMonitoringMesinPlasmaOperator = $this->monitoringMesinPlasmaOperatorModel
+            $insertMonitoringMesinPlasmaOperator = $monitoringMesinPlasmaOperatorModel
                 ->insertMultiple($dataInsertMonitoringMesinPlasmaOperator);
             $insertMonitoringMesinPlasmaOperatorLog = ($insertMonitoringMesinPlasmaOperator) ? "Insert" : "Gagal insert";
             $insertMonitoringMesinPlasmaOperatorLog .= " operator monitoring mesin plasma dengan id master " . $id;
@@ -689,13 +703,16 @@ class MonitoringMesinPlasmaController extends BaseController
             }
 
             if ($dataAlat) {
+                $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+                $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
                 foreach ($dataAlat as $detail) {
                     $idDetailPenerimaanAlatKotor = $detail['idDetailAlatKotor'];
                     $jumlah = $detail['jumlah'];
                     $alat = $detail['alat'];
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         if ($jumlah > $dataAlatKotorBerdasarkanId['sisa']) {
@@ -720,7 +737,7 @@ class MonitoringMesinPlasmaController extends BaseController
                         'jumlah' => $jumlah,
                     ];
 
-                    $insertMonitoringMesinPlasmaDetail = $this->monitoringMesinPlasmaDetailModel
+                    $insertMonitoringMesinPlasmaDetail = $monitoringMesinPlasmaDetailModel
                         ->insert($dataDetail, false);
 
                     if (!$insertMonitoringMesinPlasmaDetail) {
@@ -743,14 +760,14 @@ class MonitoringMesinPlasmaController extends BaseController
                     }
 
                     if ($idDetailPenerimaanAlatKotor) {
-                        $dataDetailAlatKotorBerdasarkanId = $this->penerimaanAlatKotorDetailModel
+                        $dataDetailAlatKotorBerdasarkanId = $penerimaanAlatKotorDetailModel
                             ->find($idDetailPenerimaanAlatKotor);
 
                         $dataUpdateDetailPenerimaanAlatKotor = [
                             'status_proses' => 'Diproses',
                             'sisa' => ((int)$dataDetailAlatKotorBerdasarkanId['sisa'] - (int)$jumlah)
                         ];
-                        $this->penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
+                        $penerimaanAlatKotorDetailModel->update($idDetailPenerimaanAlatKotor, $dataUpdateDetailPenerimaanAlatKotor);
                     }
                 }
 
@@ -775,12 +792,15 @@ class MonitoringMesinPlasmaController extends BaseController
 
     public function prosesUlangMonitoringMesinPlasma($id = null)
     {
-        $dataMonitoringMesinPlasmaBerdasarkanId = $this->monitoringMesinPlasmaModel->find($id);
+        $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+        $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
+        $dataMonitoringMesinPlasmaBerdasarkanId = $monitoringMesinPlasmaModel->find($id);
         if (!$dataMonitoringMesinPlasmaBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $dataDetail = $this->monitoringMesinPlasmaDetailModel->dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster($id);
+        $dataDetail = $monitoringMesinPlasmaDetailModel->dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster($id);
 
         $jamSekarang = date('H:i');
         $shift = '';
@@ -790,11 +810,14 @@ class MonitoringMesinPlasmaController extends BaseController
             $shift = 'sore';
         }
 
+        $pegawaiModel = model(PegawaiModel::class);
+        $departemenModel = model(DepartemenModel::class);
+
         $data = [
             'title' => 'Proses Ulang Monitoring Mesin Plasma',
             'header' => 'Monitoring Mesin Plasma (H2O2)',
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
-            'listDepartemen' => $this->departemenModel->getListDepartemen(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
+            'listDepartemen' => $departemenModel->getListDepartemen(),
             'dataMesinPlasma' => $dataMonitoringMesinPlasmaBerdasarkanId,
             'shift' => $shift,
             'tanggalSekarang' => date('Y-m-d'),
@@ -808,7 +831,10 @@ class MonitoringMesinPlasmaController extends BaseController
     public function hapusMonitoringMesinPlasma($id)
     {
         if ($this->request->isAJAX()) {
-            $dataMonitoringMesinPlasmaBerdasarkanId = $this->monitoringMesinPlasmaModel->find($id);
+            $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+            $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+
+            $dataMonitoringMesinPlasmaBerdasarkanId = $monitoringMesinPlasmaModel->find($id);
             if (!$dataMonitoringMesinPlasmaBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -821,7 +847,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
-            $deleteMonitoringMesinPlasma = $this->monitoringMesinPlasmaModel->delete($id, false);
+            $deleteMonitoringMesinPlasma = $monitoringMesinPlasmaModel->delete($id, false);
             $deleteMonitoringMesinPlasmaLog = ($deleteMonitoringMesinPlasma) ? "Delete" : "Gagal delete";
             $deleteMonitoringMesinPlasmaLog .= " monitoring mesin plasma dengan id " . $id;
             $this->logModel->insert([
@@ -840,13 +866,15 @@ class MonitoringMesinPlasmaController extends BaseController
                     ]
                 );
             }
-            $dataDetailAlat = $this->monitoringMesinPlasmaDetailModel->where('id_monitoring_mesin_plasma', $id)->findAll();
+            $dataDetailAlat = $monitoringMesinPlasmaDetailModel->where('id_monitoring_mesin_plasma', $id)->findAll();
+
+            $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
 
             foreach ($dataDetailAlat as $detail) {
                 $idAlatKotor = $detail['id_detail_penerimaan_alat_kotor'];
                 $jumlah = $detail['jumlah'];
                 if ($idAlatKotor && !$dataMonitoringMesinPlasmaBerdasarkanId['proses_ulang']) {
-                    $dataAlatKotor = $this->penerimaanAlatKotorDetailModel->find($idAlatKotor);
+                    $dataAlatKotor = $penerimaanAlatKotorDetailModel->find($idAlatKotor);
 
                     $updateData = [
                         'sisa' => (int)$dataAlatKotor['sisa'] + (int)$jumlah
@@ -855,7 +883,7 @@ class MonitoringMesinPlasmaController extends BaseController
                     if ((int)$updateData['sisa'] === (int)$dataAlatKotor['jumlah']) {
                         $updateData['status_proses'] = '';
                     }
-                    $this->penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
+                    $penerimaanAlatKotorDetailModel->update($idAlatKotor, $updateData, false);
                 }
             }
 
@@ -873,33 +901,41 @@ class MonitoringMesinPlasmaController extends BaseController
 
     public function verifikasiMonitoringMesinPlasma($id)
     {
-        $dataMonitoringMesinPlasmaBerdasarkanId = $this->monitoringMesinPlasmaModel->find($id);
+        $monitoringMesinPlasmaModel = model(MonitoringMesinPlasmaModel::class);
+        $monitoringMesinPlasmaDetailModel = model(MonitoringMesinPlasmaDetailModel::class);
+        $monitoringMesinPlasmaOperatorModel = model(MonitoringMesinPlasmaOperatorModel::class);
+        $monitoringMesinPlasmaVerifikasiModel = model(MonitoringMesinPlasmaVerifikasiModel::class);
+
+        $dataMonitoringMesinPlasmaBerdasarkanId = $monitoringMesinPlasmaModel->find($id);
         if (!$dataMonitoringMesinPlasmaBerdasarkanId) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $operatorMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaOperatorModel
+        $operatorMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaOperatorModel
             ->operatorMonitoringMesinPlasmaBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaDetailModel
+        $dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaDetailModel
             ->dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster($id)
             ->getResultArray();
 
-        $dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster = $this->monitoringMesinPlasmaVerifikasiModel
+        $dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster = $monitoringMesinPlasmaVerifikasiModel
             ->where('id_monitoring_mesin_plasma', $id)
             ->first();
 
-        $dataProsesUlang = $this->monitoringMesinPlasmaModel
+        $dataProsesUlang = $monitoringMesinPlasmaModel
             ->where('proses_ulang', $id)
             ->where('deleted_at', null)
             ->get()
             ->getNumRows();
 
         $idAlatKotor = array_column($dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster, 'id_detail_penerimaan_alat_kotor');
-        $dataDistribusi = $this->penerimaanAlatKotorDetailModel
+        $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
+        $dataDistribusi = $penerimaanAlatKotorDetailModel
             ->dataAlatKotorDistribusiBerdasarkanId($idAlatKotor)
             ->getNumRows();
+
+        $pegawaiModel = model(PegawaiModel::class);
             
         $data = [
             'title' => 'Verifikasi Monitoring Mesin Plasma',
@@ -907,7 +943,7 @@ class MonitoringMesinPlasmaController extends BaseController
             'dataMesinPlasma' => $dataMonitoringMesinPlasmaBerdasarkanId,
             'operator' => $operatorMonitoringMesinPlasmaBerdasarkanIdMaster,
             'detailAlat' => $dataDetailMonitoringMesinPlasmaBerdasarkanIdMaster,
-            'listPegawaiCSSD' => $this->pegawaiModel->getListPegawaiCSSD(),
+            'listPegawaiCSSD' => $pegawaiModel->getListPegawaiCSSD(),
             'dataVerifikasi' => $dataVerifikasiMonitoringMesinPlasmaBerdasarkanIdMaster,
             'prosesUlang' => $dataProsesUlang,
             'dataDistribusi' => $dataDistribusi
@@ -1051,14 +1087,15 @@ class MonitoringMesinPlasmaController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinPlasmaVerifikasiModel->find($id);
+            $monitoringMesinPlasmaVerifikasiModel = model(MonitoringMesinPlasmaVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinPlasmaVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 $dataId = [
                     'id' => generateUUID(),
                     'id_monitoring_mesin_plasma' => $id
                 ];
                 $dataInsert = array_merge($dataId, $data);
-                $insertVerifikasiMonitoringMesinPlasma = $this->monitoringMesinPlasmaVerifikasiModel->insert($dataInsert);
+                $insertVerifikasiMonitoringMesinPlasma = $monitoringMesinPlasmaVerifikasiModel->insert($dataInsert);
                 $insertVerifikasiMonitoringMesinPlasmaLog = ($insertVerifikasiMonitoringMesinPlasma) ? "Insert" : "Gagal insert";
                 $insertVerifikasiMonitoringMesinPlasmaLog .= " verifikasi monitoring mesin plasma dengan id " . $insertVerifikasiMonitoringMesinPlasma;
                 $this->logModel->insert([
@@ -1136,7 +1173,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 'hasil_verifikasi' => $hasilVerifikasi,
             ];
 
-            $updateVerifikasiMonitoringMesinPlasma = $this->monitoringMesinPlasmaVerifikasiModel->update($id, $dataUpdate);
+            $updateVerifikasiMonitoringMesinPlasma = $monitoringMesinPlasmaVerifikasiModel->update($id, $dataUpdate);
             $updateVerifikasiMonitoringMesinPlasmaLog = ($updateVerifikasiMonitoringMesinPlasma) ? "Update" : "Gagal update";
             $updateVerifikasiMonitoringMesinPlasmaLog .= " verifikasi monitoring mesin plasma dengan id " . $updateVerifikasiMonitoringMesinPlasma;
             $this->logModel->insert([
@@ -1172,7 +1209,8 @@ class MonitoringMesinPlasmaController extends BaseController
     public function hapusVerifikasi($id)
     {
         if ($this->request->isAJAX()) {
-            $dataVerifikasiBerdasarkanId = $this->monitoringMesinPlasmaVerifikasiModel->find($id);
+            $monitoringMesinPlasmaVerifikasiModel = model(MonitoringMesinPlasmaVerifikasiModel::class);
+            $dataVerifikasiBerdasarkanId = $monitoringMesinPlasmaVerifikasiModel->find($id);
             if (!$dataVerifikasiBerdasarkanId) {
                 return $this->response->setJSON(
                     [
@@ -1185,7 +1223,7 @@ class MonitoringMesinPlasmaController extends BaseController
                 );
             }
 
-            $deleteVerifikasiMonitoringMesinPlasma = $this->monitoringMesinPlasmaVerifikasiModel->delete($id, false);
+            $deleteVerifikasiMonitoringMesinPlasma = $monitoringMesinPlasmaVerifikasiModel->delete($id, false);
             $deleteVerifikasiMonitoringMesinPlasmaLog = ($deleteVerifikasiMonitoringMesinPlasma) ? "Delete" : "Gagal delete";
             $deleteVerifikasiMonitoringMesinPlasmaLog .= " verifikasi monitoring mesin plasma dengan id " . $id;
             $this->logModel->insert([
