@@ -125,6 +125,3 @@ nb-configuration.xml
 /phpunit*.xml
 /.phpunit.*.cache
 
-# db
-struktur db/
-

@@ -106,7 +106,7 @@ $(function () {
 function eksporExcel(tabel) {
     if ($.fn.DataTable.isDataTable(tabel)) {
         $(tabel).DataTable().button('.buttons-excel').trigger();
-    }else{
+    } else {
         swalWithBootstrapButtons.fire(
             "Gagal",
             "Terjadi Masalah,<br>Silahkan Hubungi Tim IT",
@@ -153,29 +153,19 @@ function dataHeaderTabelLaporanBmhp(tab) {
                             let regex = /^[a-zA-Z]+$/i;
                             let style = regex.test(data) ? "float:left" : "float:right";
                             return /* html */`<span style="${style}">${data}</span>`;
-                        },
+                        }
                     },
                 ];
 
                 let th = '';
                 $.each(res.data, function (ind, val) {
-                    // let regex = /^[A-Z]{3}-\d{2}$/; regex untuk cek inputan `JAN-23`
                     let regex = /^(?:[A-Z]{3}-\d{2}|Jumlah|-)$/;
                     th +=/* html */`<th scope="col" class="text-center align-middle" style="width:${regex.test(val) ? '3%' : '7%'};">${val.toUpperCase()}</th>`;
                     dataColumns.push(
                         {
                             "data": ind,
                             "orderable": false,
-                            "className": regex.test(val) ? "text-center align-middle" : "text-right align-middle",
-                            // "render":function(data, type, row){
-                            //     if (regex.test(data)) {
-                            //         return /* html */`<span style="float-left">${data}</span>`;
-                            //     } else {
-                            //         let formatCurrency = Intl.NumberFormat('id-ID');
-                            //         let hasil = formatCurrency.format(data);
-                            //         return /* html */`<span style="float-right">${hasil}</span>`;
-                            //     }
-                            // }
+                            "className": regex.test(val) ? "text-center align-middle" : "text-right align-middle"
                         }
                     );
                 });
@@ -225,7 +215,16 @@ function tampilLaporanBmhpSteril(tab, dataParam, dataColumns) {
             buttons: [
                 {
                     "extend": 'excelHtml5',
-                    "action": exportAction
+                    "action": exportAction,
+                    exportOptions: {
+                        format: {
+                            body: function (data, row, column, node) {
+                                let dataClean = data.toString().replace(/<span style="float:right">|<span style="float:left">|<\/span>/g, '');
+                                let regex = /^(\d{1,3}(?:\.\d{3})*|\d+)(,\d{2})?$/;
+                                return regex.test(dataClean) ? dataClean.toString().replace(',', ';').replace('.', ',').replace(';', '.') : dataClean;
+                            }
+                        }
+                    }
                 },
             ],
             lengthMenu: [
@@ -241,7 +240,7 @@ function tampilLaporanBmhpSteril(tab, dataParam, dataColumns) {
                 infoFiltered: '(FILTER DARI _MAX_ TOTAL DATA)',
                 loadingRecords: "Loading...",
                 processing: "Proses menampilkan data...",
-            },
+            }
         }
     );
 }
