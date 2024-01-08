@@ -93,5 +93,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/dekontaminasi/ujilarutan/proses_tambah_edit_ujilarutan.js"></script>
+<script src="<?= base_url(); ?>public/js/dekontaminasi/ujilarutan/proses_tambah_edit_ujilarutan.js"></script>
 <?= $this->endSection(); ?>

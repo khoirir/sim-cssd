@@ -53,5 +53,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/datamaster/databmhp/proses_tambah_edit_databmhp.js"></script>
+<script src="<?= base_url(); ?>public/js/datamaster/databmhp/proses_tambah_edit_databmhp.js"></script>
 <?= $this->endSection(); ?>

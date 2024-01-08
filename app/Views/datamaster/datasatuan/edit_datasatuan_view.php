@@ -41,5 +41,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/datamaster/datasatuan/proses_tambah_edit_datasatuan.js"></script>
+<script src="<?= base_url(); ?>public/js/datamaster/datasatuan/proses_tambah_edit_datasatuan.js"></script>
 <?= $this->endSection(); ?>

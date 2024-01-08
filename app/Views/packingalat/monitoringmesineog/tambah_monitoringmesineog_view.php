@@ -155,5 +155,5 @@
 <script>
     let urlDataAlatKotor = "<?= base_url('/penerimaan-alat-kotor/data-alat-kotor'); ?>";
 </script>
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesineog/proses_tambah_edit_monitoringmesineog.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesineog/proses_tambah_edit_monitoringmesineog.js"></script>
 <?= $this->endSection(); ?>

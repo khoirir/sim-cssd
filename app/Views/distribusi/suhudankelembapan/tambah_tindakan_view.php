@@ -62,5 +62,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/distribusi/suhudankelembapan/tindakan_suhudankelembapan.js"></script>
+<script src="<?= base_url(); ?>public/js/distribusi/suhudankelembapan/tindakan_suhudankelembapan.js"></script>
 <?= $this->endSection(); ?>

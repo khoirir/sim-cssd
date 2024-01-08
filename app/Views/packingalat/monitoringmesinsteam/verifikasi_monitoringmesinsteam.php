@@ -244,5 +244,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinsteam/verifikasi_monitoringmesinsteam.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesinsteam/verifikasi_monitoringmesinsteam.js"></script>
 <?= $this->endSection(); ?>

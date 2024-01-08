@@ -164,5 +164,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringpackingalat/proses_tambah_edit_monitoringpackingalat.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringpackingalat/proses_tambah_edit_monitoringpackingalat.js"></script>
 <?= $this->endSection(); ?>

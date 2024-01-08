@@ -254,5 +254,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/dekontaminasi/penerimaanalatkotor/proses_tambah_edit_penerimaanalatkotor.js"></script>
+<script src="<?= base_url(); ?>public/js/dekontaminasi/penerimaanalatkotor/proses_tambah_edit_penerimaanalatkotor.js"></script>
 <?= $this->endSection(); ?>

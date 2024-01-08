@@ -71,7 +71,7 @@
 </section>
 <!-- /.content -->
 
-<script src="<?= base_url(); ?>/public/plugins/chart/chart.umd.min.js"></script>
-<script src="<?= base_url(); ?>/public/js/distribusi/suhudankelembapan/grafik_suhudankelembapan.js"></script>
+<script src="<?= base_url(); ?>public/plugins/chart/chart.umd.min.js"></script>
+<script src="<?= base_url(); ?>public/js/distribusi/suhudankelembapan/grafik_suhudankelembapan.js"></script>
 
 <?= $this->endSection(); ?>

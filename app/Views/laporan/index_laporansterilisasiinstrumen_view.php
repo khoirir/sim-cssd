@@ -69,7 +69,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/laporan-sterilisasi-instrumen";
+    let url = "<?= base_url(); ?>laporan-sterilisasi-instrumen";
 </script>
-<script src="<?= base_url(); ?>/public/js/laporan/index_laporansterilisasiinstrumen.js"></script>
+<script src="<?= base_url(); ?>public/js/laporan/index_laporansterilisasiinstrumen.js"></script>
 <?= $this->endSection(); ?>

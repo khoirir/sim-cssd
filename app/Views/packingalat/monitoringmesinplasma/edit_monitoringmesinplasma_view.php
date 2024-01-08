@@ -183,5 +183,5 @@
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
 </script>
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinplasma/proses_tambah_edit_monitoringmesinplasma.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesinplasma/proses_tambah_edit_monitoringmesinplasma.js"></script>
 <?= $this->endSection(); ?>

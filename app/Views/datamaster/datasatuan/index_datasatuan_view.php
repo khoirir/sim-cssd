@@ -34,7 +34,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/data-satuan";
+    let url = "<?= base_url(); ?>data-satuan";
 </script>
-<script src="<?= base_url(); ?>/public/js/datamaster/datasatuan/index_datasatuan.js"></script>
+<script src="<?= base_url(); ?>public/js/datamaster/datasatuan/index_datasatuan.js"></script>
 <?= $this->endSection(); ?>

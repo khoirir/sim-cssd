@@ -72,7 +72,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/monitoring-mesin-steam";
+    let url = "<?= base_url(); ?>monitoring-mesin-steam";
 </script>
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinsteam/index_monitoringmesinsteam.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesinsteam/index_monitoringmesinsteam.js"></script>
 <?= $this->endSection(); ?>

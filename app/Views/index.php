@@ -61,9 +61,9 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/data-grafik";
+    let url = "<?= base_url(); ?>data-grafik";
 </script>
-<script src="<?= base_url(); ?>/public/plugins/chart/chart.umd.min.js"></script>
-<script src="<?= base_url(); ?>/public/js/index_halaman_utama.js"></script>
+<script src="<?= base_url(); ?>public/plugins/chart/chart.umd.min.js"></script>
+<script src="<?= base_url(); ?>public/js/index_halaman_utama.js"></script>
 <!-- /.content -->
 <?= $this->endSection(); ?>

@@ -90,7 +90,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/uji-sealer-pouchs";
+    let url = "<?= base_url(); ?>uji-sealer-pouchs";
 </script>
-<script src="<?= base_url(); ?>/public/js/packingalat/ujisealerpouchs/index_ujisealerpouchs.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/ujisealerpouchs/index_ujisealerpouchs.js"></script>
 <?= $this->endSection(); ?>

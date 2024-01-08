@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SIM CSSD | Login</title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url(); ?>/public/img/logo-karsa.jpg">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url(); ?>public/img/logo-karsa.jpg">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="<?= base_url(); ?>/public/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>public/plugins/fontawesome-free/css/all.min.css">
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="<?= base_url(); ?>/public/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>public/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="<?= base_url(); ?>/public/plugins/sweetalert2/sweetalert2.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>public/plugins/sweetalert2/sweetalert2.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="<?= base_url(); ?>/public/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>public/css/adminlte.min.css">
 </head>
 
 <body class="hold-transition login-page">
@@ -25,7 +25,7 @@
         <div class="card card-outline card-primary">
             <form action="<?= base_url('/attempt-login'); ?>" method="post" id="formLogin">
                 <div class="card-header text-center">
-                    <img src="<?= base_url(); ?>/public/img/logo-karsa.jpg" alt="logo" style="width: 40%;height: auto;" class="card-img-top">
+                    <img src="<?= base_url(); ?>public/img/logo-karsa.jpg" alt="logo" style="width: 40%;height: auto;" class="card-img-top">
                     <h5>SIM CSSD</h5>
                 </div>
                 <div class="card-body">
@@ -62,13 +62,13 @@
     <!-- /.login-box -->
 
     <!-- jQuery -->
-    <script src="<?= base_url(); ?>/public/plugins/jquery/jquery.min.js"></script>
+    <script src="<?= base_url(); ?>public/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
-    <script src="<?= base_url(); ?>/public/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url(); ?>public/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="<?= base_url(); ?>/public/js/adminlte.min.js"></script>
+    <script src="<?= base_url(); ?>public/js/adminlte.min.js"></script>
     <!-- sweetalert2 -->
-    <script src="<?= base_url(); ?>/public/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script src="<?= base_url(); ?>public/plugins/sweetalert2/sweetalert2.min.js"></script>
 
     <script>
         $('#formLogin').on('submit', function(e) {

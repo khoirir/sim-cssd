@@ -72,7 +72,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/laporan-unit-dilayani";
+    let url = "<?= base_url(); ?>laporan-unit-dilayani";
 </script>
-<script src="<?= base_url(); ?>/public/js/laporan/index_laporanunitdilayani.js"></script>
+<script src="<?= base_url(); ?>public/js/laporan/index_laporanunitdilayani.js"></script>
 <?= $this->endSection(); ?>

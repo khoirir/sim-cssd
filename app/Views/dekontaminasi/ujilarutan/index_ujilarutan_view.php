@@ -90,7 +90,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/uji-larutan-dtt-alkacyd";
+    let url = "<?= base_url(); ?>uji-larutan-dtt-alkacyd";
 </script>
-<script src="<?= base_url(); ?>/public/js/dekontaminasi/ujilarutan/index_ujilarutan.js"></script>
+<script src="<?= base_url(); ?>public/js/dekontaminasi/ujilarutan/index_ujilarutan.js"></script>
 <?= $this->endSection(); ?>

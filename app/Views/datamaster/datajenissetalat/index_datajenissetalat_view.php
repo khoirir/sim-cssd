@@ -33,7 +33,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/data-jenis-set-alat";
+    let url = "<?= base_url(); ?>data-jenis-set-alat";
 </script>
-<script src="<?= base_url(); ?>/public/js/datamaster/datajenissetalat/index_datajenissetalat.js"></script>
+<script src="<?= base_url(); ?>public/js/datamaster/datajenissetalat/index_datajenissetalat.js"></script>
 <?= $this->endSection(); ?>

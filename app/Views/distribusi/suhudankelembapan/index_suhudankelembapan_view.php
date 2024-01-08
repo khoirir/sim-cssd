@@ -72,8 +72,8 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/suhu-dan-kelembapan";
+    let url = "<?= base_url(); ?>suhu-dan-kelembapan";
 </script>
-<script src="<?= base_url(); ?>/public/js/distribusi/suhudankelembapan/index_suhudankelembapan.js"></script>
+<script src="<?= base_url(); ?>public/js/distribusi/suhudankelembapan/index_suhudankelembapan.js"></script>
 
 <?= $this->endSection(); ?>

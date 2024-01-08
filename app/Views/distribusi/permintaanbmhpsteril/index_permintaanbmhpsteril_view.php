@@ -95,7 +95,7 @@
 <script>
     let csrfToken = "<?= csrf_token(); ?>";
     let csrfHash = "<?= csrf_hash(); ?>";
-    let url = "<?= base_url(); ?>/permintaan-bmhp-steril";
+    let url = "<?= base_url(); ?>permintaan-bmhp-steril";
 </script>
-<script src="<?= base_url(); ?>/public/js/distribusi/permintaanbmhpsteril/index_permintaanbmhpsteril.js"></script>
+<script src="<?= base_url(); ?>public/js/distribusi/permintaanbmhpsteril/index_permintaanbmhpsteril.js"></script>
 <?= $this->endSection(); ?>

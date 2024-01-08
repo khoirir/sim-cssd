@@ -228,5 +228,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesineog/verifikasi_monitoringmesineog.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesineog/verifikasi_monitoringmesineog.js"></script>
 <?= $this->endSection(); ?>

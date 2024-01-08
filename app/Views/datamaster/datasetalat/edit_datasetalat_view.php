@@ -60,5 +60,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/datamaster/datasetalat/proses_tambah_edit_datasetalat.js"></script>
+<script src="<?= base_url(); ?>public/js/datamaster/datasetalat/proses_tambah_edit_datasetalat.js"></script>
 <?= $this->endSection(); ?>

@@ -228,5 +228,5 @@
     </div><!--/. container-fluid -->
 </section>
 <!-- /.content -->
-<script src="<?= base_url(); ?>/public/js/packingalat/monitoringmesinplasma/verifikasi_monitoringmesinplasma.js"></script>
+<script src="<?= base_url(); ?>public/js/packingalat/monitoringmesinplasma/verifikasi_monitoringmesinplasma.js"></script>
 <?= $this->endSection(); ?>
