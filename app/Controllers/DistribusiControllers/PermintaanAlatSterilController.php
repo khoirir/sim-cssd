@@ -39,7 +39,7 @@ class PermintaanAlatSterilController extends BaseController
             $ruangan = $this->request->getPost('ruangan');
             $start = $this->request->getPost('start');
             $limit = $this->request->getPost('length');
-            
+
             $permintaanAlatSterilModel = model(PermintaanAlatSterilModel::class);
 
             $dataPermintaanAlatSterilBerdasarkanFilter = $permintaanAlatSterilModel
@@ -391,15 +391,15 @@ class PermintaanAlatSterilController extends BaseController
 
     public function editPermintaanAlatSteril($id = null)
     {
-        
+
         $permintaanAlatSterilModel = model(PermintaanAlatSterilModel::class);
         $dataPermintaan = $permintaanAlatSterilModel
-        ->dataPermintaanAlatSterilBerdasarkanId($id)
-        ->getRowArray();
+            ->dataPermintaanAlatSterilBerdasarkanId($id)
+            ->getRowArray();
         if (!$dataPermintaan) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
-        
+
         $permintaanAlatSterilDetailModel = model(PermintaanAlatSterilDetailModel::class);
         $dataDetailPermintaan = $permintaanAlatSterilDetailModel
             ->dataPermintaanAlaSterilDetailBerdasarkanIdMaster($id);
@@ -430,8 +430,8 @@ class PermintaanAlatSterilController extends BaseController
                         'toastr' => [
                             'tipe' => 'error',
                             'teks' => "<div class=\"row\"><div class=\"col align-self-center\"><span>Data Tidak Ditemukan</span></div></div>"
-                            ]
-                            ]
+                        ]
+                    ]
                 );
             }
 
@@ -453,7 +453,7 @@ class PermintaanAlatSterilController extends BaseController
                     ]
                 );
             }
-            
+
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
             $penerimaanAlatKotorDetailModel = model(PenerimaanAlatKotorDetailModel::class);
@@ -504,7 +504,7 @@ class PermintaanAlatSterilController extends BaseController
                         ]
                     ]
                 );
-            }            
+            }
             $dataDetail = $permintaanAlatSterilDetailModel->find($id);
             $idAlatKotor = $dataDetail['id_detail_penerimaan_alat_kotor'];
             $jumlah = $dataDetail['jumlah'];
